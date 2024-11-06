@@ -3,6 +3,9 @@ import { SplashScreen, Stack } from 'expo-router'
 import { useFonts } from 'expo-font';
 import { useEffect } from 'react'
 
+// Import your global CSS file
+import "../global.css";
+
 const RootLayout = () => {
   const [fontsLoaded, error] = useFonts({
     "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
@@ -30,7 +33,6 @@ const RootLayout = () => {
   return (
     <Stack>
       <Stack.Screen name='index' options={{ headerShown: false }} />
-      <Stack.Screen name='auth' options={{ headerShown: false }} />
     </Stack>  
   )
 }
