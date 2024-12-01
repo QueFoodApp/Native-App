@@ -3,11 +3,12 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from .database import Base
 
+"""
 # Address Table
 class Address(Base):
     __tablename__ = "address_table"
 
-    restaurant_id = Column(Integer, primary_key=True, index=True)
+    restaurant_id = Column(Integer, ForeignKey("restaurant_table.restaurant_id"), primary_key=True, index=True)
     state = Column(String, nullable=False)
     city = Column(String, nullable=False)
     street_address = Column(String, nullable=False)
@@ -17,22 +18,25 @@ class Address(Base):
 
     # Relationship with Restaurant
     restaurant = relationship("Restaurant", back_populates="address")
+"""
 
-
-# Customer Account Table
 class CustomerAccount(Base):
     __tablename__ = "customer_account_table"
 
-    customer_id = Column(Integer, primary_key=True, index=True)
+    customer_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     manager_account_name = Column(String(255), nullable=False)
     manager_account_password = Column(String(255), nullable=False)
     phone_number = Column(String(15), nullable=True)
     address = Column(String(255), nullable=True)
+    verified = Column(Boolean, default=True) 
+    otp = Column(String(6), nullable=True) 
+    email = Column(String(255), nullable=True)
 
     # Relationship with Orders
-    orders = relationship("Order", back_populates="customer")
+    #orders = relationship("Order", back_populates="customer")
 
 
+"""
 # Manager Account Table
 class ManagerAccount(Base):
     __tablename__ = "manager_account_table"
@@ -97,3 +101,4 @@ class Restaurant(Base):
     managers = relationship("ManagerAccount", back_populates="restaurant")
     orders = relationship("Order", back_populates="restaurant")
     address = relationship("Address", back_populates="restaurant", uselist=False)
+"""

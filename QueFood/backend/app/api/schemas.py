@@ -2,121 +2,145 @@ from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime
 
-# Address Schemas
-class AddressCreate(BaseModel):
-    state: str
-    city: str
-    street_address: str
-    postal_code: int
-    latitude: Optional[float] = None
-    longitude: Optional[float] = None
+# # Address Schemas
+# class AddressCreate(BaseModel):
+#     state: str
+#     city: str
+#     street_address: str
+#     postal_code: int
+#     latitude: Optional[float] = None
+#     longitude: Optional[float] = None
 
-class AddressOut(BaseModel):
-    restaurant_id: int
-    state: str
-    city: str
-    street_address: str
-    postal_code: int
-    latitude: Optional[float] = None
-    longitude: Optional[float] = None
+# class AddressOut(BaseModel):
+#     restaurant_id: int
+#     state: str
+#     city: str
+#     street_address: str
+#     postal_code: int
+#     latitude: Optional[float] = None
+#     longitude: Optional[float] = None
 
-    class Config:
-        orm_mode = True
+#     class Config:
+#         orm_mode = True
 
 
 # Customer Account Schemas
 class CustomerAccountCreate(BaseModel):
     manager_account_name: str = Field(..., min_length=3, max_length=255)
     manager_account_password: str = Field(..., min_length=6, max_length=255)
-    phone_number: Optional[str]
-    address: Optional[str]
+    phone_number: str = Field(..., min_length=10, max_length=10)
+    email: Optional[str] = Field(None, max_length=255)
+    #address: Optional[AddressCreate]
 
 class CustomerAccountOut(BaseModel):
     customer_id: int
     manager_account_name: str
     phone_number: Optional[str]
+    email: Optional[str]  # Add this line
     address: Optional[str]
 
     class Config:
         orm_mode = True
 
 
-# Manager Account Schemas
-class ManagerAccountCreate(BaseModel):
-    restaurant_id: int
-    manager_account_name: str = Field(..., min_length=3, max_length=255)
-    manager_account_password: str = Field(..., min_length=6, max_length=255)
+# Phone Verification Schemas
+class PhoneVerificationRequest(BaseModel):
+    phone_number: str = Field(..., min_length=10, max_length=10)
 
-class ManagerAccountOut(BaseModel):
-    manager_id: int
-    restaurant_id: int
-    manager_account_name: str
+class OTPVerificationRequest(BaseModel):
+    phone_number: str = Field(..., min_length=10, max_length=10)
+    otp: str = Field(..., min_length=6, max_length=6)
 
-    class Config:
-        orm_mode = True
+class PhoneVerificationResponse(BaseModel):
+    message: str
 
 
-# Menu Schemas
-class MenuCreate(BaseModel):
-    restaurant_id: int
-    category: str
-    food_name: str
-    food_description: Optional[str]
-    food_price: float
-    availability: bool = True
+# Sign-In Schemas
+class SignInRequest(BaseModel):
+    phone_number: str = Field(..., min_length=10, max_length=10)
+    password: str = Field(..., min_length=6, max_length=255)
 
-class MenuOut(BaseModel):
-    menu_id: int
-    restaurant_id: int
-    category: str
-    food_name: str
-    food_description: Optional[str]
-    food_price: float
-    availability: bool
-
-    class Config:
-        orm_mode = True
+class SignInResponse(BaseModel):
+    access_token: str
+    token_type: str
 
 
-# Order Schemas
-class OrderCreate(BaseModel):
-    customer_id: int
-    restaurant_id: int
-    items_count: int
-    subtotal: float
-    taxes: float
-    fooditems: Optional[str]  # JSON or serialized data
-    total: float
+# # Manager Account Schemas
+# class ManagerAccountCreate(BaseModel):
+#     restaurant_id: int
+#     manager_account_name: str = Field(..., min_length=3, max_length=255)
+#     manager_account_password: str = Field(..., min_length=6, max_length=255)
 
-class OrderOut(BaseModel):
-    order_number: str
-    due_date: datetime
-    status: Optional[str]
-    customer_id: int
-    restaurant_id: int
-    items_count: int
-    subtotal: float
-    taxes: float
-    fooditems: Optional[str]
-    total: float
+# class ManagerAccountOut(BaseModel):
+#     manager_id: int
+#     restaurant_id: int
+#     manager_account_name: str
 
-    class Config:
-        orm_mode = True
+#     class Config:
+#         orm_mode = True
 
 
-# Restaurant Schemas
-class RestaurantCreate(BaseModel):
-    restaurant_name: str
-    ratings: Optional[float]
-    restaurant_type: Optional[str]
-    pricing_levels: Optional[str]
+# # Menu Schemas
+# class MenuCreate(BaseModel):
+#     restaurant_id: int
+#     category: str
+#     food_name: str
+#     food_description: Optional[str]
+#     food_price: float
+#     availability: bool = True
 
-class RestaurantOut(BaseModel):
-    restaurant_id: int
-    restaurant_name: str
-    ratings: Optional[float]
-    restaurant_type: Optional[str]
-    pricing_levels: Optional[str]
+# class MenuOut(BaseModel):
+#     menu_id: int
+#     restaurant_id: int
+#     category: str
+#     food_name: str
+#     food_description: Optional[str]
+#     food_price: float
+#     availability: bool
 
-    class Config:
-        orm_mode = True
+#     class Config:
+#         orm_mode = True
+
+
+# # Order Schemas
+# class OrderCreate(BaseModel):
+#     customer_id: int
+#     restaurant_id: int
+#     items_count: int
+#     subtotal: float
+#     taxes: float
+#     fooditems: Optional[str]  # JSON or serialized data
+#     total: float
+
+# class OrderOut(BaseModel):
+#     order_number: str
+#     due_date: datetime
+#     status: Optional[str]
+#     customer_id: int
+#     restaurant_id: int
+#     items_count: int
+#     subtotal: float
+#     taxes: float
+#     fooditems: Optional[str]
+#     total: float
+
+#     class Config:
+#         orm_mode = True
+
+
+# # Restaurant Schemas
+# class RestaurantCreate(BaseModel):
+#     restaurant_name: str
+#     ratings: Optional[float]
+#     restaurant_type: Optional[str]
+#     pricing_levels: Optional[str]
+
+# class RestaurantOut(BaseModel):
+#     restaurant_id: int
+#     restaurant_name: str
+#     ratings: Optional[float]
+#     restaurant_type: Optional[str]
+#     pricing_levels: Optional[str]
+
+#     class Config:
+#         orm_mode = True
