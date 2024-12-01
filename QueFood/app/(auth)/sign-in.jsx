@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SafeAreaView, View, Text } from 'react-native';
+import { SafeAreaView, View, Text, Alert } from 'react-native';
 import { router } from 'expo-router';
 import BackgroundShapes from '../../components/Background';
 import PhoneNumberInput from '../../components/PhoneNumberInput';
@@ -17,11 +17,53 @@ const SignIn = () => {
 
   const [passwordError, setPasswordError] = useState("");
 
-  const validatePassword = () => {
-    if (form.password !== "expectedPassword") {
-      setPasswordError("Incorrect Password");
-    } else {
-      setPasswordError("");
+  const handleSignIn = async () => {
+    // Ensure the phone number is formatted correctly
+    const formattedPhoneNumber = form.phone.replace(/\D/g, '');
+
+    // Validate the phone number
+    if (formattedPhoneNumber.length !== 10) {
+      Alert.alert('Error', 'Please enter a valid 10-digit phone number');
+      return;
+    }
+
+    // Log the data to be sent
+    console.log('Sign In Data:', {
+      phone_number: formattedPhoneNumber,
+      password: form.password,
+    });
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/auth/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          phone_number: formattedPhoneNumber,
+          password: form.password,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Sign In error:', errorData);
+        if (response.status === 401) {
+          setPasswordError('Incorrect password');
+          Alert.alert('Error', 'Incorrect password');
+        } else if (response.status === 404) {
+          Alert.alert('Error', 'Phone number not registered. Please sign up.');
+        } else {
+          throw new Error(errorData.detail || 'Failed to sign in');
+        }
+        return;
+      }
+
+      const data = await response.json();
+      Alert.alert('Success', 'Sign in successful');
+      router.push('/home');
+    } catch (error) {
+      Alert.alert('Error', error.message);
     }
   };
 
@@ -34,15 +76,19 @@ const SignIn = () => {
       <PhoneNumberInput form={form} setForm={setForm} />
 
       {/* Password Input with Error */}
-      <PasswordInput form={form} setForm={setForm} error={passwordError} />
+      <PasswordInput
+        form={form}
+        setForm={setForm}
+        error={passwordError}
+      />
 
       {/* Forgot Password Link */}
       <ForgotPasswordLink onPress={() => router.push('/reset-password')} />
- 
-      {/* Inline Log In Text and Button */}
-      <LoginSection title="Log In" onLoginPress={() => console.log("Login Pressed")} />
 
-      {/* Social Login Section */}
+      {/* Login Section */}
+      <LoginSection title="Sign In" onLoginPress={handleSignIn} />
+
+      {/* Social Login */}
       <SocialLogin
         onGooglePress={() => console.log("Google login pressed")}
         onFacebookPress={() => console.log("Facebook login pressed")}
@@ -61,9 +107,6 @@ const SignIn = () => {
           </Text>
         </Text>
       </View>
-
-
-
     </SafeAreaView>
   );
 };

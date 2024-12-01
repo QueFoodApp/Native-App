@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.api.database import get_db
 from app.api.models import CustomerAccount
-from app.api.schemas import CustomerAccountCreate, PhoneVerificationRequest, PhoneVerificationResponse, OTPVerificationRequest
+from app.api.schemas import CustomerAccountCreate, PhoneVerificationRequest, PhoneVerificationResponse, OTPVerificationRequest, SignInRequest, SignInResponse
 from app.api.auth import hash_password, create_access_token, verify_password
 from app.api.otp import generate_otp, send_otp
 
@@ -65,10 +65,12 @@ def signup(customer: CustomerAccountCreate, db: Session = Depends(get_db)):
     db.refresh(existing_user)
     return {"message": "Signup successful. You can now log in."}
 
-@router.post("/signin")
-def signin(phone_number: str, password: str, db: Session = Depends(get_db)):
-    user = db.query(CustomerAccount).filter(CustomerAccount.phone_number == phone_number).first()
-    if not user or not verify_password(password, user.manager_account_password):
+@router.post("/signin", response_model=SignInResponse)
+def signin(customer: SignInRequest, db: Session = Depends(get_db)):
+    user = db.query(CustomerAccount).filter(CustomerAccount.phone_number == customer.phone_number).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Phone number not registered. Please sign up.")
+    if not verify_password(customer.password, user.manager_account_password):
         raise HTTPException(status_code=401, detail="Invalid phone number or password")
 
     access_token = create_access_token(data={"sub": user.phone_number})
