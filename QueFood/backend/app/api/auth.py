@@ -10,7 +10,7 @@ from fastapi import HTTPException
 load_dotenv()
 
 # JWT configuration
-SECRET_KEY = os.getenv("SECRET_KEY", "your_secret_key")  # Set your secret key in .env
+SECRET_KEY = os.getenv("SECRET_KEY", "your_secret_key")  # Set secret key in .env
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 300000))
 

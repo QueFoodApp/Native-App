@@ -16,6 +16,12 @@ const SignUp = () => {
     // Ensure the phone number is formatted correctly
     const formattedPhoneNumber = form.phone.replace(/\D/g, '');
 
+    // Validate the phone number
+    if (formattedPhoneNumber.length !== 10) {
+      Alert.alert('Error', 'Please enter a valid 10-digit phone number');
+      return;
+    }
+
     // Log the data to be sent
     console.log('Send OTP Data:', {
       phone_number: formattedPhoneNumber,

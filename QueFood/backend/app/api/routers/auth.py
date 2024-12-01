@@ -24,8 +24,8 @@ def send_otp_endpoint(phone_verification: PhoneVerificationRequest, db: Session 
         phone_number=phone_verification.phone_number,
         otp=otp,
         verified=False,
-        manager_account_name="default_name",  # Provide a default value
-        manager_account_password="default_password"  # Provide a default value
+        manager_account_name="default_name",  
+        manager_account_password="default_password"  
     )
     db.add(new_user)
     db.commit()
