@@ -64,6 +64,11 @@ class SignInResponse(BaseModel):
     access_token: str
     token_type: str
 
+# Change Password Schemas
+class ChangePasswordRequest(BaseModel):
+    phone_number: str = Field(..., min_length=10, max_length=10)
+    new_password: str = Field(..., min_length=6, max_length=255)
+
 
 # # Manager Account Schemas
 # class ManagerAccountCreate(BaseModel):

@@ -53,7 +53,11 @@ const PhoneVerification = () => {
 
       const data = await response.json();
       Alert.alert('Success', data.message);
-      router.push({ pathname: '/profile-information', params: { phone_number } }); // Navigate to profile information screen
+      if (origin === 'signup') {
+        router.push({ pathname: '/profile-information', params: { phone_number } }); // Navigate to profile information screen
+      } else if (origin === 'resetPassword') {
+        router.push({ pathname: '/change-password', params: { phone_number } }); // Navigate to change password screen
+      }
     } catch (error) {
       Alert.alert('Error', error.message);
     }
