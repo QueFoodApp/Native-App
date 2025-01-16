@@ -31,9 +31,27 @@ const PhoneVerification = () => {
     }
   };
 
-  const handleResend = () => {
-    console.log("Resend code pressed");
-    // Handle resend logic here
+  const handleResend = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/auth/resend-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phone_number }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Send OTP error:', errorData);
+        throw new Error(errorData.detail || 'Failed to send OTP');
+      }
+
+      const data = await response.json();
+      Alert.alert('Success', data.message);
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    }
   };
 
   const handleConfirm = async () => {
@@ -53,7 +71,10 @@ const PhoneVerification = () => {
 
       const data = await response.json();
       Alert.alert('Success', data.message);
-      if (origin === 'signup') {
+      if (origin === 'SignUp') {
+        //check if this line of code is reached 
+        console.log('SignUp is reached');
+
         router.push({ pathname: '/profile-information', params: { phone_number } }); // Navigate to profile information screen
       } else if (origin === 'resetPassword') {
         router.push({ pathname: '/change-password', params: { phone_number } }); // Navigate to change password screen

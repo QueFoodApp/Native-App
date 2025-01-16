@@ -32,6 +32,23 @@ def send_otp_endpoint(phone_verification: PhoneVerificationRequest, db: Session 
 
     return {"message": "OTP sent successfully"}
 
+@router.post("/resend-otp", response_model=PhoneVerificationResponse)
+def resend_otp(phone_verification: PhoneVerificationRequest, db: Session = Depends(get_db)):
+    user = db.query(CustomerAccount).filter(CustomerAccount.phone_number == phone_verification.phone_number).first()
+    if not user:
+        raise HTTPException(status_code=400, detail="Phone number not registered. Please send OTP first.")
+
+    # Generate OTP and send it
+    otp = generate_otp()
+    send_otp(phone_verification.phone_number, otp)
+
+    # Store OTP in the database
+    user.otp = otp
+    db.commit()
+
+    return {"message": "OTP sent successfully"}
+
+
 @router.post("/verify-otp", response_model=PhoneVerificationResponse)
 def verify_otp(request: OTPVerificationRequest, db: Session = Depends(get_db)):
     user = db.query(CustomerAccount).filter(CustomerAccount.phone_number == request.phone_number).first()
