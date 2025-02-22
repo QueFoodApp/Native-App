@@ -40,3 +40,30 @@ yarn-error.*
 /backend/venv/
 /backend/.env
 /backend/.env.local
+
+# Ignore node_modules (Frontend)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Ignore Virtual Environments (Backend)
+venv/
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+
+# Ignore Environment & Secrets
+.env
+.env.local
+.env.development
+.env.production
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore IDE-specific files
+.vscode/
+.idea/
+*.swp
