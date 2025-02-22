@@ -23,12 +23,13 @@ import { SafeAreaView, View, Text, Button, TouchableOpacity } from 'react-native
 import { router } from 'expo-router';
 
 const Home = () => {
+  
   const handleLogout = () => {
     router.push('/sign-in'); // Navigate back to the sign-in screen
   };
 
-  const handleUserAgreement = () => {
-    router.push('/agreement'); // Corrected path
+  const handleUserProfile = () => {
+    router.push('/profile'); // Corrected path
   };
   
 
@@ -45,10 +46,10 @@ const Home = () => {
 
       {/* User Agreement Button */}
       <TouchableOpacity
-        onPress={handleUserAgreement}
+        onPress={handleUserProfile}
         className="mt-4 bg-blue-500 p-3 rounded-lg"
       >
-        <Text className="text-white text-lg">View User Agreement</Text>
+        <Text className="text-white text-lg">User Profile</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
