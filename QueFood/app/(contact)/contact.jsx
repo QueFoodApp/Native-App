@@ -1,9 +1,10 @@
 import React from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet, Alert, Linking, ActionSheetIOS, Platform } from 'react-native';
+import { SafeAreaView, View, Text, TouchableOpacity, Alert, Linking, ActionSheetIOS, Platform, ScrollView } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import BackButton from '../../components/BackButton';
 
-const customerServicePhone = "+1 (647)-236-3656"; // Replace with your test number
+const customerServicePhone = "+1 (647)-236-3656";
 
 const Contact = () => {
   
@@ -13,8 +14,8 @@ const Contact = () => {
       ActionSheetIOS.showActionSheetWithOptions(
         {
           options: [`Call ${customerServicePhone}`, "Cancel"],
-          destructiveButtonIndex: 0, // The "Call" option
-          cancelButtonIndex: 1, // The "Cancel" option
+          destructiveButtonIndex: 0,
+          cancelButtonIndex: 1,
         },
         (buttonIndex) => {
           if (buttonIndex === 0) {
@@ -37,90 +38,41 @@ const Contact = () => {
 
   return (
     <>
-      <Stack.Screen options={{ 
-        title: 'Contact Information',  
-        headerTintColor: 'black',
-        headerLeft: () => (
-          <TouchableOpacity onPress={() => router.back()} style={styles.customBackButton}>
-            <Ionicons name="arrow-back" size={24} color="black" />
-          </TouchableOpacity>
-        ),
-      }} />
+      <Stack.Screen options={{ headerShown: false }} />
 
-      <SafeAreaView style={styles.container}>
-        <View style={styles.headerContainer}>
-          <Text style={styles.title}>Contact</Text>
-          <Text style={styles.title}>Information</Text>
-        </View>
+      <SafeAreaView className="flex-1 bg-white relative">
+        <BackButton />
 
-        {/* Customer Service via Phone */}
-        <TouchableOpacity style={styles.menuItem} onPress={handlePhoneCall}>
-          <Ionicons name="call-outline" size={22} color="black" style={styles.icon} />
-          <Text style={styles.menuText}>Customer Service via Phone</Text>
-          <Ionicons name="chevron-forward-outline" size={20} color="black" />
-        </TouchableOpacity>
+        <ScrollView className="flex-1">
+          {/* Header */}
+          <View className="px-5 pt-16">
+            <Text className="text-4xl font-bold">Contact</Text>
+            <Text className="text-4xl font-bold mb-5">Information</Text>
+          </View>
 
-        {/* Customer Service via Email (Placeholder) */}
-        <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/email-support')}>
-          <Ionicons name="mail-outline" size={22} color="black" style={styles.icon} />
-          <Text style={styles.menuText}>Customer Service via Email</Text>
-          <Ionicons name="chevron-forward-outline" size={20} color="black" />
-        </TouchableOpacity>
+          {/* Contact Options */}
+          <View className="bg-white mx-5 rounded-lg shadow-sm overflow-hidden">
+            {/* Customer Service via Phone */}
+            <TouchableOpacity className="flex-row items-center px-5 py-4 border-b border-gray-200" onPress={handlePhoneCall}>
+              <Ionicons name="call-outline" size={22} color="black" className="mr-4" />
+              <Text className="flex-1 text-lg text-black">Customer Service via Phone</Text>
+              <Ionicons name="chevron-forward-outline" size={20} color="black" />
+            </TouchableOpacity>
+
+            {/* Customer Service via Email */}
+            <TouchableOpacity className="flex-row items-center px-5 py-4" onPress={() => router.push('/email-support')}>
+              <Ionicons name="mail-outline" size={22} color="black" className="mr-4" />
+              <Text className="flex-1 text-lg text-black">Customer Service via Email</Text>
+              <Ionicons name="chevron-forward-outline" size={20} color="black" />
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
 
         {/* App Version */}
-        <Text style={styles.versionText}>App Version: 1.0.12</Text>
+        <Text className="text-center text-gray-400 text-sm mb-5">App Version: 1.0.12</Text>
       </SafeAreaView>
     </>
   );
 };
-
-// ✅ **Updated Styles**
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
-  customBackButton: {
-    marginLeft: 10,
-    padding: 10,
-  },
-  headerContainer: {
-    paddingHorizontal: 20,
-    paddingTop: 10, 
-    paddingBottom: 10,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-  },
-  menuContainer: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    marginHorizontal: 15,
-    overflow: 'hidden',
-  },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 20, 
-    paddingHorizontal: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E5E5',
-  },
-  icon: {
-    marginRight: 15,
-    width: 30,
-  },
-  menuText: {
-    flex: 1,
-    fontSize: 18,
-  },
-  versionText: {
-    textAlign: 'center',
-    color: '#B0B0B0',
-    fontSize: 12,
-    marginTop: 40,
-  },
-});
 
 export default Contact;

@@ -35,16 +35,18 @@ const HomeLayout = () => {
           <Stack.Screen name="home" options={{ headerShown: false }} />
           <Stack.Screen name="order-history" options={{ headerShown: false }} />
           <Stack.Screen name="cart" options={{ headerShown: false }} />
+          <Stack.Screen name="profile" options={{ headerShown: false }} />
         </Stack>
       </View>
 
-
-      <BottomBar
-        onHomePress={handleHomePress}
-        onOrderPress={handleOrderPress}
-        onCartPress={handleCartPress}
-        activeTab={activeTab}
-      />
+      {pathname !== "/profile" && (
+        <BottomBar
+          onHomePress={handleHomePress}
+          onOrderPress={handleOrderPress}
+          onCartPress={handleCartPress}
+          activeTab={activeTab}
+        />
+      )}
 
       <StatusBar style="dark" />
     </View>
