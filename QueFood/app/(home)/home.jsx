@@ -49,7 +49,7 @@ const Home = () => {
 
   const handleProfilePress = () => {
     console.log("Profile pressed");
-    //possibly router.push("/profile")
+    router.push("/profile")
   };
 
   const handleChangeLocation = () => {
