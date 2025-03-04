@@ -67,3 +67,6 @@ __pycache__/
 .vscode/
 .idea/
 *.swp
+
+# Ignore DS_Store 
+.DS_Store
