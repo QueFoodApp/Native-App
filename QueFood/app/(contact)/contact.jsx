@@ -4,7 +4,7 @@ import { Stack, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import BackButton from '../../components/BackButton';
 
-const customerServicePhone = "+1 (647)-236-3656";
+const customerServicePhone = "+1 (519)-857-2246";
 
 const Contact = () => {
   

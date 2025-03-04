@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import LoginSection from '../../components/LoginSection';
 import BackButton from '../../components/BackButton';
+import API_BASE_URL from '../../config'; 
 
 const PhoneVerification = () => {
   const [code, setCode] = useState(["", "", "", "", "", ""]); // For a 6-digit verification code
@@ -33,7 +34,7 @@ const PhoneVerification = () => {
 
   const handleResend = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/auth/resend-otp', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/resend-otp`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -57,7 +58,7 @@ const PhoneVerification = () => {
   const handleConfirm = async () => {
     try {
       const otp = code.join('');
-      const response = await fetch('http://127.0.0.1:8000/api/auth/verify-otp', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/verify-otp`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

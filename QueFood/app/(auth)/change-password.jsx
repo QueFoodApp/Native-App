@@ -4,6 +4,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import LoginSection from '../../components/LoginSection';
 import EyeIcon from '../../assets/images/eye.svg'; // Ensure the path to the icon is correct
 import BackButton from '../../components/BackButton';
+import API_BASE_URL from '../../config'; 
 
 const ChangePassword = () => {
   const [newPassword, setNewPassword] = useState('');
@@ -19,7 +20,7 @@ const ChangePassword = () => {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/auth/change-password', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/change-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

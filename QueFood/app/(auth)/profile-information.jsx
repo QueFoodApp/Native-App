@@ -4,6 +4,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import LoginSection from '../../components/LoginSection';
 import EyeIcon from '../../assets/images/eye.svg'; // Ensure the path is correct
 import BackButton from '../../components/BackButton';
+import API_BASE_URL from '../../config'; 
 
 const ProfileInformation = () => {
   const [name, setName] = useState('');
@@ -32,7 +33,7 @@ const ProfileInformation = () => {
     });
   
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/auth/signup', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

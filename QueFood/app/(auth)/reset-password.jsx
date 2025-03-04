@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 import PhoneNumberInput from '../../components/PhoneNumberInput';
 import LoginSection from '../../components/LoginSection';
 import BackButton from '../../components/BackButton';
+import API_BASE_URL from '../../config'; 
 
 const ResetPassword = () => {
   const [form, setForm] = useState({
@@ -27,7 +28,7 @@ const handleSendOTP = async () => {
   });
 
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/auth/request-password-change', {
+    const response = await fetch(`${API_BASE_URL}/api/auth/request-password-change`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

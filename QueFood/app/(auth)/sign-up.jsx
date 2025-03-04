@@ -5,6 +5,7 @@ import PhoneNumberInput from '../../components/PhoneNumberInput';
 import LoginSection from '../../components/LoginSection';
 import SocialLogin from '../../components/SocialLogin';
 import BackButton from '../../components/BackButton';
+import API_BASE_URL from '../../config'; 
 
 const SignUp = () => {
   const [form, setForm] = useState({
@@ -28,7 +29,7 @@ const SignUp = () => {
     });
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/auth/send-otp', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/send-otp`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

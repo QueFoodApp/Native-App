@@ -7,6 +7,7 @@ import PasswordInput from '../../components/PasswordInput';
 import ForgotPasswordLink from '../../components/ForgetPassword';
 import LoginSection from '../../components/LoginSection';
 import SocialLogin from '../../components/SocialLogin';
+import API_BASE_URL from '../../config'; 
 
 const SignIn = () => {
   const [form, setForm] = useState({
@@ -34,7 +35,7 @@ const SignIn = () => {
     });
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/auth/signin', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
