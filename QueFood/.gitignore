@@ -41,7 +41,11 @@ yarn-error.*
 /backend/.env
 /backend/.env.local
 
-# Python Cache 
+# Ignore compiled Python files
+__pycache__/
 *.pyc
 *.pyo
-__pycache__/
+
+# Ignore virtual environments
+venv/
+
