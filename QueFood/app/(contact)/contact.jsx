@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import BackButton from '../../components/BackButton';
 
 const customerServicePhone = "+1 (519)-857-2246";
+const customerServiceEmail = "wutongliuxue@gmail.com"; // Replace with your actual email
 
 const Contact = () => {
   
@@ -36,6 +37,17 @@ const Contact = () => {
     }
   };
 
+    const handleEmailSupport = () => {
+    const subject = encodeURIComponent("Customer Support Inquiry");
+    const body = encodeURIComponent("Hello, I need help with...");
+    const mailtoURL = `mailto:${customerServiceEmail}?subject=${subject}&body=${body}`;
+
+    Linking.openURL(mailtoURL).catch((err) => 
+        Alert.alert("Error", "Could not open email client")
+    );
+    };
+
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
@@ -60,11 +72,23 @@ const Contact = () => {
             </TouchableOpacity>
 
             {/* Customer Service via Email */}
-            <TouchableOpacity className="flex-row items-center px-5 py-4" onPress={() => router.push('/email-support')}>
+            {/* <TouchableOpacity className="flex-row items-center px-5 py-4" onPress={() => router.push('/email-support')}>
               <Ionicons name="mail-outline" size={22} color="black" className="mr-4" />
               <Text className="flex-1 text-lg text-black">Customer Service via Email</Text>
               <Ionicons name="chevron-forward-outline" size={20} color="black" />
+            </TouchableOpacity> */}
+
+            {/* Customer Service via Email */}
+            <TouchableOpacity 
+            className="flex-row items-center px-5 py-4" 
+            onPress={handleEmailSupport}
+            >
+            <Ionicons name="mail-outline" size={22} color="black" className="mr-4" />
+            <Text className="flex-1 text-lg text-black">Customer Service via Email</Text>
+            <Ionicons name="chevron-forward-outline" size={20} color="black" />
             </TouchableOpacity>
+
+
           </View>
         </ScrollView>
 
