@@ -2,7 +2,8 @@ import React from "react";
 import { View, TextInput, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-const LocationTopBar = ({ form, setForm, error, onProfilePress }) => {
+const LocationTopBar = ({ form = { location: "" }, setForm, error, onProfilePress }) => {
+
   const labelColor = error ? "#FF0000" : "#6b7280";
 
   return (

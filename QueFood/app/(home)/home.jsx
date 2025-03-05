@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import BottomBar from '../../components/BottomBar';
 import TopBar from '../../components/TopBar';
 
+
 //component to show "No Restaurants Nearby" layout
 const NoRestaurantsNearby = ({ onChangeLocation }) => (
   <View className="flex-1 justify-center items-center px-8">
@@ -98,3 +99,52 @@ const Home = () => {
 };
 
 export default Home;
+
+// const Home = () => {
+//   const [restaurants, setRestaurants] = useState([]);
+//   const [loading, setLoading] = useState(true);
+
+//   useEffect(() => {
+//     const loadRestaurants = async () => {
+//       setLoading(true);
+//       const data = await fetchNearbyRestaurants();
+//       setRestaurants(data);
+//       setLoading(false);
+//     };
+
+//     loadRestaurants();
+//   }, []);
+
+//   return (
+//     <SafeAreaView className="flex-1 bg-white">
+//       {/* <TopBar /> */}
+
+//       {loading ? (
+//         <View className="flex-1 justify-center items-center">
+//           <ActivityIndicator size="large" color="#000" />
+//           <Text className="mt-4">Fetching nearby restaurants...</Text>
+//         </View>
+//       ) : restaurants.length === 0 ? (
+//         <View className="flex-1 justify-center items-center">
+//           <Text className="text-xl font-semibold">No restaurants nearby</Text>
+//           <Text className="text-center text-gray-500">We couldn’t find any restaurants near you.</Text>
+//         </View>
+//       ) : (
+//         <FlatList
+//           data={restaurants}
+//           keyExtractor={(item) => item.id.toString()}
+//           renderItem={({ item }) => (
+//             <View className="p-4 border-b border-gray-300">
+//               <Text className="text-lg font-bold">{item.name}</Text>
+//               <Text className="text-gray-500">{item.address}</Text>
+//             </View>
+//           )}
+//         />
+//       )}
+
+//       <BottomBar />
+//     </SafeAreaView>
+//   );
+// };
+
+// export default Home;
