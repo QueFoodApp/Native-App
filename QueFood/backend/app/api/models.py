@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from .database import Base
 
-"""
+
 # Address Table
 class Address(Base):
     __tablename__ = "address_table"
@@ -18,7 +18,6 @@ class Address(Base):
 
     # Relationship with Restaurant
     restaurant = relationship("Restaurant", back_populates="address")
-"""
 
 class CustomerAccount(Base):
     __tablename__ = "customer_account_table"
@@ -33,10 +32,10 @@ class CustomerAccount(Base):
     email = Column(String(255), nullable=True)
 
     # Relationship with Orders
-    #orders = relationship("Order", back_populates="customer")
+    orders = relationship("Order", back_populates="customer")
 
 
-"""
+
 # Manager Account Table
 class ManagerAccount(Base):
     __tablename__ = "manager_account_table"
@@ -101,4 +100,3 @@ class Restaurant(Base):
     managers = relationship("ManagerAccount", back_populates="restaurant")
     orders = relationship("Order", back_populates="restaurant")
     address = relationship("Address", back_populates="restaurant", uselist=False)
-"""
