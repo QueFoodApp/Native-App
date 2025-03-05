@@ -10,8 +10,8 @@ export const fetchNearbyRestaurants = async () => {
 
   try {
     const response = await fetch(
-      `${API_BASE_URL}/api/restaurants/nearby?lat=${location.latitude}&lng=${location.longitude}`
-    );
+      `${API_BASE_URL}/api/restaurant?latitude=${location.latitude}&longitude=${location.longitude}&radius=300`
+    );    
 
     if (!response.ok) {
       throw new Error("Failed to fetch restaurants");

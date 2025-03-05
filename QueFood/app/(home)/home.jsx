@@ -1,97 +1,103 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, View, Text, Button, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { router } from 'expo-router';
+import { SafeAreaView, View, Text, ActivityIndicator, FlatList, Image, TouchableOpacity } from 'react-native';
+import { fetchNearbyRestaurants } from '../(utils)/api';
 import { Ionicons } from '@expo/vector-icons';
-
 import BottomBar from '../../components/BottomBar';
 import TopBar from '../../components/TopBar';
+import { getRandomFoodImage } from '../(utils)/imageUtils';
 
-
-//component to show "No Restaurants Nearby" layout
-const NoRestaurantsNearby = ({ onChangeLocation }) => (
-  <View className="flex-1 justify-center items-center px-8">
-
-    <Ionicons name="paper-plane-outline" size={64} color="#aaa" style={{ marginBottom: 10 }} />
-
-    <Text className="text-xl font-semibold mb-2">No restaurants nearby</Text>
-
-    <Text className="text-center text-gray-500 mb-4">
-      We couldn’t find any restaurants near your location.
-      Follow along as we launch new cities.
-    </Text>
-
-    <TouchableOpacity
-        className="bg-black px-5 py-3 rounded-full"
-        onPress={onChangeLocation}
-      >
-        <Text className="text-white font-medium">Change Location</Text>
-      </TouchableOpacity>
-  </View>
-);
- 
 const Home = () => {
-
-  const [form, setForm] = useState({ location: '' });
-
-  const [error, setError] = useState(false);
-
+  const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [restaurants, setRestaurants] = useState([]);
-
-
-  const fetchRestaurants = async () => {
-  };
-
+  // Fetch restaurants when the component loads
   useEffect(() => {
-    fetchRestaurants();
+    const loadRestaurants = async () => {
+      setLoading(true);
+      let data = await fetchNearbyRestaurants();
+  
+      // Assign a unique image to each restaurant using its ID
+      data = data.map((restaurant) => ({
+        ...restaurant,
+        image: getRandomFoodImage(restaurant.restaurant_id), // Uses restaurant ID for uniqueness
+      }));
+  
+      setRestaurants(data);
+      setLoading(false);
+    };
+  
+    loadRestaurants();
   }, []);
 
-
-  const handleProfilePress = () => {
-    console.log("Profile pressed");
-    router.push("/profile")
+  const getRandomRestaurants = (restaurants) => {
+    if (restaurants.length <= 4) return restaurants; // If 4 or fewer, use all
+    return restaurants.sort(() => 0.5 - Math.random()).slice(0, 4); // Shuffle and pick 4
   };
-
-  const handleChangeLocation = () => {
-    console.log("Change Location pressed");
-    
-  };
-
-  // If loading, show a spinner
-  if (!loading) {
-    return (
-      <SafeAreaView className="flex-1 bg-white justify-center items-center">
-        <ActivityIndicator size="large" color="#000" />
-        <Text className="mt-4">Fetching restaurants...</Text>
-      </SafeAreaView>
-    );
-  }
-
+  
   return (
     <SafeAreaView className="flex-1 bg-white">
+      <TopBar />
 
-      <TopBar
-        form={form}
-        setForm={setForm}
-        error={error}
-        onProfilePress={handleProfilePress}
-      />
+      {/* 🔥 Banner Section */}
+      <View className="h-48 bg-black mx-4 rounded-lg overflow-hidden justify-center items-center mb-4">
+        {/* Background Image */}
+        <Image 
+          source={{ uri: 'https://source.unsplash.com/600x300/?coffee' }} 
+          className="absolute w-full h-full opacity-40"
+        />
 
-      {/* show NoRestaurantsNearby or fetched places */}
-      {restaurants.length === 0 ? (
-        <NoRestaurantsNearby onChangeLocation={handleChangeLocation} />
-      ) : (
+        <Text className="text-white text-xl font-semibold">Relax with a cup of coffee</Text>
+        <Text className="text-white text-sm mb-2">Buy one, get one free</Text>
+        <TouchableOpacity className="bg-white px-5 py-2 rounded-full mt-2">
+          <Text className="text-black font-bold">View Restaurants</Text>
+        </TouchableOpacity>
+      </View>
+
+      {loading ? (
         <View className="flex-1 justify-center items-center">
-          <Text className="text-2xl font-bold mb-4">Welcome to the Home Page!</Text>
-          <Text className="text-lg mb-8">You have successfully signed in.</Text>
-          <Button title="Logout" onPress={handleLogout} />
-          
-          <View className="mt-10">
-            <Text className="mt-2">Error is {error ? 'ON' : 'OFF'}</Text>
-            <Text className="mt-2">Found {restaurants.length} restaurants</Text>
-          </View>
+          <ActivityIndicator size="large" color="#000" />
+          <Text className="mt-4">Fetching restaurants...</Text>
         </View>
+      ) : restaurants.length === 0 ? (
+        <View className="flex-1 justify-center items-center px-8">
+          <Ionicons name="paper-plane-outline" size={64} color="#aaa" style={{ marginBottom: 10 }} />
+          <Text className="text-xl font-semibold mb-2">No restaurants nearby</Text>
+          <Text className="text-center text-gray-500 mb-4">
+            We couldn’t find any restaurants near your location.
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={restaurants}
+          keyExtractor={(item) => item.restaurant_id.toString()}
+          renderItem={({ item }) => (
+            <View className="bg-white mx-4 mb-4 rounded-lg overflow-hidden shadow-lg">
+              
+              {/* 🖼️ Restaurant Image (Guaranteed) */}
+              <Image 
+  source={{ uri: item.image }} 
+  className="w-full h-48 bg-gray-200"
+  onError={(e) => console.log("Image failed to load:", item.image, e.nativeEvent.error)} // Debugging
+/>
+
+
+              {/* 📋 Restaurant Info */}
+              <View className="p-4">
+                <Text className="text-lg font-bold">{item.restaurant_name}</Text>
+                <Text className="text-gray-500">{item.address.street_address}, {item.address.city}</Text>
+
+                {/* ⭐ Rating | 💰 Price */}
+                <View className="flex-row items-center mt-2">
+                  <Text className="text-gray-500">⭐ {item.ratings}</Text>
+                  <Text className="text-gray-500 ml-2">💰 {item.pricing_levels}</Text>
+                </View>
+
+                {/* 📏 Distance */}
+                <Text className="text-gray-400 mt-1">{item.distance_km} km away</Text>
+              </View>
+            </View>
+          )}
+        />
       )}
 
     </SafeAreaView>
@@ -99,52 +105,3 @@ const Home = () => {
 };
 
 export default Home;
-
-// const Home = () => {
-//   const [restaurants, setRestaurants] = useState([]);
-//   const [loading, setLoading] = useState(true);
-
-//   useEffect(() => {
-//     const loadRestaurants = async () => {
-//       setLoading(true);
-//       const data = await fetchNearbyRestaurants();
-//       setRestaurants(data);
-//       setLoading(false);
-//     };
-
-//     loadRestaurants();
-//   }, []);
-
-//   return (
-//     <SafeAreaView className="flex-1 bg-white">
-//       {/* <TopBar /> */}
-
-//       {loading ? (
-//         <View className="flex-1 justify-center items-center">
-//           <ActivityIndicator size="large" color="#000" />
-//           <Text className="mt-4">Fetching nearby restaurants...</Text>
-//         </View>
-//       ) : restaurants.length === 0 ? (
-//         <View className="flex-1 justify-center items-center">
-//           <Text className="text-xl font-semibold">No restaurants nearby</Text>
-//           <Text className="text-center text-gray-500">We couldn’t find any restaurants near you.</Text>
-//         </View>
-//       ) : (
-//         <FlatList
-//           data={restaurants}
-//           keyExtractor={(item) => item.id.toString()}
-//           renderItem={({ item }) => (
-//             <View className="p-4 border-b border-gray-300">
-//               <Text className="text-lg font-bold">{item.name}</Text>
-//               <Text className="text-gray-500">{item.address}</Text>
-//             </View>
-//           )}
-//         />
-//       )}
-
-//       <BottomBar />
-//     </SafeAreaView>
-//   );
-// };
-
-// export default Home;
