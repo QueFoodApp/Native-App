@@ -23,3 +23,17 @@ export const fetchNearbyRestaurants = async () => {
     return [];
   }
 };
+
+// ✅ Add this function for fetching menu items
+export const fetchMenuByRestaurantId = async (restaurantId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/menu/${restaurantId}`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch menu");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching menu:", error);
+    return [];
+  }
+};
