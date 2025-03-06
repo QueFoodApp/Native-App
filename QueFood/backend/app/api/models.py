@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime, Boolean, Numeric
+from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime, Boolean, Numeric,DECIMAL
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -102,6 +102,14 @@ class OrderTable(Base):
     fooditems = Column(JSON, nullable=False)  # ✅ Stored as JSON for flexibility
     total = Column(Float, nullable=False, default=0.0)
 
+    # ✅ New Address Columns
+    state = Column(String(255), nullable=True)
+    city = Column(String(255), nullable=True)
+    street_address = Column(String(255), nullable=True)
+    postal_code = Column(String(20), nullable=True)
+    latitude = Column(DECIMAL(9, 6), nullable=True)
+    longitude = Column(DECIMAL(9, 6), nullable=True)
+
     # Relationship with Customer
     customer = relationship("CustomerAccount", back_populates="orders")
 
@@ -112,8 +120,7 @@ class OrderTable(Base):
     restaurant = relationship("Restaurant", back_populates="orders")
 
     def __repr__(self):
-        return f"<Order(order_number={self.order_number}, restaurant_name={self.restaurant_name}, status={self.status}, total={self.total})>"
-
+        return f"<Order(order_number={self.order_number}, restaurant_name={self.restaurant_name}, status={self.status}, total={self.total}, address={self.street_address}, city={self.city}, state={self.state}, postal_code={self.postal_code})>"
 
 # Restaurant Table
 class Restaurant(Base):

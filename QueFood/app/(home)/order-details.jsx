@@ -40,7 +40,7 @@ const OrderDetails = () => {
                 {/* Order Details */}
                 <View className="p-4">
                     <Text className="text-2xl font-bold">{order.restaurant_name}</Text>
-                    <Text className="text-gray-500">{order.address || "No address provided"}</Text>
+                    <Text className="text-gray-500">{order.street_address || "No address provided"}</Text>
                     <View className="flex-row justify-between items-center mt-3">
                         <Text className="text-gray-700 font-medium">
                             Order #{order.order_number}

@@ -58,10 +58,10 @@ def get_phone_number_from_token(request: Request):
 @router.get("/orders")
 def get_customer_orders(
     db: Session = Depends(get_db),
-    customer_number: str = Depends(get_phone_number_from_token)  # ✅ Use correct identifier
+    customer_number: str = Depends(get_phone_number_from_token)  # Use correct identifier
 ):
     """Fetch full order details from `order_table` using `order_number`."""
-    print(f"📌 Looking up orders for customer_number: {customer_number}")  # ✅ Debugging
+    print(f"📌 Looking up orders for customer_number: {customer_number}")  # Debugging
 
     # ✅ Get order numbers from `customer_history_table`
     order_records = db.query(CustomerHistory.order_number).filter(
@@ -81,7 +81,7 @@ def get_customer_orders(
         print("❌ No matching orders in order_table")
         return {"message": "No orders found in order_table", "customer_number": customer_number}
 
-    # ✅ Convert orders to JSON-friendly format
+    # ✅ Convert orders to JSON-friendly format, including address details
     order_list = []
     for order in orders:
         order_list.append({
@@ -95,7 +95,13 @@ def get_customer_orders(
             "taxes": order.taxes,
             "fooditems": order.fooditems,  # Assuming fooditems is JSON-serializable
             "total": order.total,
-            "restaurant_name": order.restaurant_name
+            "restaurant_name": order.restaurant_name,
+            "state": order.state,
+            "city": order.city,
+            "street_address": order.street_address,
+            "postal_code": order.postal_code,
+            "latitude": float(order.latitude) if order.latitude else None,  # Convert Decimal to float
+            "longitude": float(order.longitude) if order.longitude else None,  # Convert Decimal to float
         })
 
     print(f"📌 Retrieved Orders: {order_list}")  # ✅ Debugging retrieved orders
@@ -105,3 +111,4 @@ def get_customer_orders(
         "customer_number": customer_number,
         "orders": order_list  # ✅ Full order details
     }
+
