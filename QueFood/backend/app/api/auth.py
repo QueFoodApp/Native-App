@@ -31,15 +31,26 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
         expire = datetime.utcnow() + expires_delta
     else:
         expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-def decode_access_token(token: str) -> Union[Dict, None]:
+    to_encode.update({"exp": expire})
+
+    print(f"📌 Token Payload Before Encoding: {to_encode}")  # ✅ Debugging
+    token = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    print(f"📌 Generated Token: {token}")  # ✅ Debugging
+    return token
+
+
+def decode_access_token(token: str) -> dict:
     """Decode a JWT token and return the payload."""
     try:
+        print(f"📌 Received Token for Verification: {token}")  # ✅ Debugging
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        print(f"📌 Decoded Payload: {payload}")  # ✅ Debugging
         return payload
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token has expired.")
     except jwt.PyJWTError:
         raise HTTPException(status_code=401, detail="Invalid token.")
+
+
+

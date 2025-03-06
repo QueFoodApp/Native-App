@@ -10,7 +10,7 @@ const Contact = () => {
   
   const handlePhoneCall = () => {
     if (Platform.OS === 'ios') {
-      // ✅ Show Action Sheet on iOS
+      // Show Action Sheet on iOS
       ActionSheetIOS.showActionSheetWithOptions(
         {
           options: [`Call ${customerServicePhone}`, "Cancel"],
@@ -24,7 +24,7 @@ const Contact = () => {
         }
       );
     } else {
-      // ✅ Direct Call for Android
+      // ThatDirect Call for Android
       Alert.alert(
         "Confirm Call",
         `Call ${customerServicePhone}?`,
