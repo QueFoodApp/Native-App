@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, View, Text, ActivityIndicator, FlatList, Image, TouchableOpacity } from "react-native";
-import { fetchNearbyRestaurants } from "../(utils)/api";
+import { fetchNearbyRestaurants } from "../HelperFunctions/api";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router"; // Import router for navigation
 import BottomBar from "../../components/BottomBar";
 import LocationTopBar from "../../components/TopBar"; // Ensure correct import
-import { getRandomFoodImage } from "../(utils)/imageUtils";
+import { getRandomFoodImage } from "../HelperFunctions/imageUtils";
 
 const Home = () => {
   const [restaurants, setRestaurants] = useState([]);
