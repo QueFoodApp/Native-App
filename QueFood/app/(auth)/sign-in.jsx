@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { SafeAreaView, View, Text, Alert } from 'react-native';
 import { router } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // ✅ Import AsyncStorage
 import BackgroundShapes from '../../components/Background';
 import PhoneNumberInput from '../../components/PhoneNumberInput';
 import PasswordInput from '../../components/PasswordInput';
@@ -19,21 +20,18 @@ const SignIn = () => {
   const [passwordError, setPasswordError] = useState("");
 
   const handleSignIn = async () => {
-    // Ensure the phone number is formatted correctly
     const formattedPhoneNumber = form.phone.replace(/\D/g, '');
-
-    // Validate the phone number
+  
     if (formattedPhoneNumber.length !== 10) {
       Alert.alert('Error', 'Please enter a valid 10-digit phone number');
       return;
     }
-
-    // Log the data to be sent
+  
     console.log('Sign In Data:', {
       phone_number: formattedPhoneNumber,
       password: form.password,
     });
-
+  
     try {
       const response = await fetch(`${API_BASE_URL}/api/auth/signin`, {
         method: 'POST',
@@ -45,7 +43,7 @@ const SignIn = () => {
           password: form.password,
         }),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Sign In error:', errorData);
@@ -59,8 +57,9 @@ const SignIn = () => {
         }
         return;
       }
-
+  
       const data = await response.json();
+      await AsyncStorage.setItem("token", data.access_token); // ✅ Store token
       Alert.alert('Success', 'Sign in successful');
       router.push('/home');
     } catch (error) {
@@ -72,7 +71,7 @@ const SignIn = () => {
     <SafeAreaView className="flex-1 bg-white">
       {/* Background Shapes */}
       <BackgroundShapes />
-      
+
       {/* Phone Number Input */}
       <PhoneNumberInput form={form} setForm={setForm} />
 
@@ -101,7 +100,7 @@ const SignIn = () => {
         <Text className="text-gray-500 text-sm font-sfpro">
           Don’t have an account?{' '}
           <Text
-            onPress={() => router.push('/sign-up')} // Navigate to SignUp page
+            onPress={() => router.push('/sign-up')}
             className="text-red-500 font-semibold"
           >
             Sign Up

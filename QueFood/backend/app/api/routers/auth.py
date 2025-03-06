@@ -20,6 +20,7 @@ def send_otp_endpoint(phone_verification: PhoneVerificationRequest, db: Session 
 
     # Store OTP in the database
     new_user = CustomerAccount(
+        customer_id = phone_verification.phone_number,
         phone_number=phone_verification.phone_number,
         otp=otp,
         verified=False,

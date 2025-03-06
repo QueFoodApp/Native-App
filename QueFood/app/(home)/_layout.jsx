@@ -36,6 +36,7 @@ const HomeLayout = () => {
           <Stack.Screen name="order-history" options={{ headerShown: false }} />
           <Stack.Screen name="cart" options={{ headerShown: false }} />
           <Stack.Screen name="profile" options={{ headerShown: false }} />
+          <Stack.Screen name="order-details" options={{ headerShown: true, title: 'Order Details' }} />
         </Stack>
       </View>
 
