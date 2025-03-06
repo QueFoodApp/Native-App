@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.api.database import get_db
 from app.api.auth import decode_access_token  # ✅ Import `decode_access_token`
 from app.api.models import CustomerHistory, OrderTable 
+from sqlalchemy import asc, desc
 
 router = APIRouter()
 
@@ -60,7 +61,7 @@ def get_customer_orders(
     db: Session = Depends(get_db),
     customer_number: str = Depends(get_phone_number_from_token)  # Use correct identifier
 ):
-    """Fetch full order details from `order_table` using `order_number`."""
+    """Fetch full order details from `order_table` sorted by `due_date`."""
     print(f"📌 Looking up orders for customer_number: {customer_number}")  # Debugging
 
     # ✅ Get order numbers from `customer_history_table`
@@ -74,8 +75,13 @@ def get_customer_orders(
         print("❌ No orders found for this customer")
         return {"message": "No orders found for this customer", "customer_number": customer_number}
 
-    # ✅ Fetch full order details from `order_table`
-    orders = db.query(OrderTable).filter(OrderTable.order_number.in_(order_numbers)).all()
+    # ✅ Fetch full order details from `order_table` and sort by `due_date`
+    orders = (
+        db.query(OrderTable)
+        .filter(OrderTable.order_number.in_(order_numbers))
+        .order_by(desc(OrderTable.due_date))  # Change to `asc(OrderTable.due_date)` for earliest first
+        .all()
+    )
 
     if not orders:
         print("❌ No matching orders in order_table")
@@ -104,11 +110,10 @@ def get_customer_orders(
             "longitude": float(order.longitude) if order.longitude else None,  # Convert Decimal to float
         })
 
-    print(f"📌 Retrieved Orders: {order_list}")  # ✅ Debugging retrieved orders
+    print(f"📌 Retrieved Orders (sorted by due_date): {order_list}")  # ✅ Debugging retrieved orders
 
     return {
         "message": "Orders retrieved successfully",
         "customer_number": customer_number,
-        "orders": order_list  # ✅ Full order details
+        "orders": order_list  # ✅ Full order details, sorted by due_date
     }
-
