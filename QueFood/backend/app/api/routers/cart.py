@@ -6,6 +6,7 @@ from uuid import uuid4
 from typing import List, Dict
 from datetime import datetime
 from sqlalchemy import func
+from sqlalchemy.orm.attributes import flag_modified
 
 router = APIRouter()
 
@@ -93,6 +94,8 @@ def add_item_to_cart(
     """
     Add an item to the cart's fooditems array.
     """
+    print(f"Received item from frontend: {item}")  # Log the received item
+
     cart = db.query(models.OrderTable).filter(
         models.OrderTable.order_number == order_number,
         models.OrderTable.status == "cart"
@@ -112,6 +115,7 @@ def add_item_to_cart(
 
     # Ensure quantity is provided and valid
     quantity = item.get('quantity', 1)
+    print(f"Retrieved quantity from item: {quantity}") #log quantity retrieved from item
     if quantity <= 0:
         raise HTTPException(status_code=400, detail="Quantity must be greater than zero")
 
@@ -129,10 +133,12 @@ def add_item_to_cart(
 
     if existing_item_index != -1:
         # Increment the quantity of the existing item
-        current_items[existing_item_index]["quantity"] += quantity
+        print(f"Item already exists, incrementing quantity by: {quantity}") #log when incrementing
+        current_items[existing_item_index]["quantity"] += 1
         current_items[existing_item_index]["line_total"] = float(current_items[existing_item_index]["unit_price"]) * current_items[existing_item_index]["quantity"]
     else:
         # Build a new CartItem
+        print(f"Item does not exist, adding new item with quantity: {quantity}") #log when adding
         line_total = float(menu_item.food_price) * quantity
         new_item = {
             "menu_id": menu_item.menu_id,
@@ -142,17 +148,25 @@ def add_item_to_cart(
             "line_total": line_total
         }
         current_items.append(new_item)
+    print(f"Items after update: {current_items}") #log items after update.
 
     # Update the cart's fooditems
     cart.fooditems = current_items
+
+    flag_modified(cart, "fooditems")
+
 
     # Recalculate
     cart.items_count = sum(i["quantity"] for i in current_items)
     cart.subtotal = sum(i["line_total"] for i in current_items)
     cart.taxes = round(cart.subtotal * 0.1, 2)  # example 10% tax
-
-    db.commit()
+    db.flush()
+    try: 
+        db.commit()
+    except Exception as e:
+        print(f"Error during commit: {e}")
     db.refresh(cart)
+    print(f"Cart after commit: {cart.fooditems}") #log cart after commit.
     return cart
 
 @router.delete("/cart/{order_number}/items/{menu_id}", response_model=schemas.CartRead)

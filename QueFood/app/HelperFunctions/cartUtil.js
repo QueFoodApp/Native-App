@@ -28,8 +28,11 @@ export async function addItemToCart(orderNumber, foodItem) {
   const response = await fetch(`${API_BASE_URL}/api/cart/${orderNumber}/items`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({  menu_id: foodItem.menu_id,
-        food_name: foodItem.food_name, }),
+    body: JSON.stringify({
+      menu_id: foodItem.menu_id,
+      food_name: foodItem.food_name,
+      quantity: foodItem.quantity, // Add quantity here
+    }),
   });
   if (!response.ok) {
     throw new Error(`addItemToCart failed: ${response.statusText}`);

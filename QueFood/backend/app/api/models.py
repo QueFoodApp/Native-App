@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from datetime import datetime
 from .database import Base
+from sqlalchemy.ext.mutable import MutableList
 
 # Address Table
 class Address(Base):
@@ -98,7 +99,7 @@ class OrderTable(Base):
     items_count = Column(Integer, nullable=False, default=1)
     subtotal = Column(Float, nullable=False, default=0.0)
     taxes = Column(Float, nullable=False, default=0.0)
-    fooditems = Column(JSON, nullable=False)  
+    fooditems = Column(MutableList.as_mutable(JSON), nullable=False) 
 
     # ✅ New Address Columns
     state = Column(String(255), nullable=True)
@@ -116,9 +117,6 @@ class OrderTable(Base):
 
     # Relationship with Restaurant
     restaurant = relationship("Restaurant", back_populates="orders")
-
-    def __repr__(self):
-        return f"<Order(order_number={self.order_number}, restaurant_name={self.restaurant_name}, status={self.status}, total={self.total}, address={self.street_address}, city={self.city}, state={self.state}, postal_code={self.postal_code})>"
 
 # Restaurant Table
 class Restaurant(Base):
