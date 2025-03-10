@@ -80,3 +80,9 @@ class CartRead(BaseModel):
         from_attributes = True  # Pydantic v2 replacement for orm_mode
 
 
+class RestaurantRead(BaseModel):
+    restaurant_name: str
+
+    class Config:
+        from_attributes = True  # Pydantic v2 replacement for orm_mode
+

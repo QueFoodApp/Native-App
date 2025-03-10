@@ -22,9 +22,15 @@ def create_or_get_cart(
     customer = db.query(models.CustomerAccount).filter(
         models.CustomerAccount.phone_number == cart_data.phone_number
     ).first()
-    print(customer)
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
+
+    # Look up the restaurant by ID
+    restaurant = db.query(models.Restaurant).filter(
+        models.Restaurant.restaurant_id == cart_data.restaurant_id
+    ).first()
+    if not restaurant:
+        raise HTTPException(status_code=404, detail="Restaurant not found")
 
     # Check if there's already an open cart for this customer
     existing_cart = db.query(models.OrderTable).filter(
@@ -276,3 +282,38 @@ def get_cart_by_customer_and_restaurant(
         raise HTTPException(status_code=404, detail="Cart not found")
 
     return cart
+
+@router.get("/carts/{phone_number}", response_model=List[schemas.CartRead])
+def get_all_carts_by_customer(
+    phone_number: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Retrieve all carts by customer ID.
+    """
+    customer = db.query(models.CustomerAccount).filter(models.CustomerAccount.phone_number == phone_number).first()
+    if not customer:
+        raise HTTPException(status_code=404, detail="Customer not found")
+
+    carts = db.query(models.OrderTable).filter(
+        models.OrderTable.customer_id == customer.customer_id,
+        models.OrderTable.status == "cart"
+    ).all()
+
+    if not carts:
+        raise HTTPException(status_code=404, detail="No carts found for this customer")
+
+    return carts
+
+@router.get("/restaurant/{restaurant_id}", response_model=schemas.RestaurantRead)
+def get_all_carts_by_restaurant(
+    restaurant_id: int,
+    db: Session = Depends(get_db)
+):
+    #get restaurant by id
+    restaurant = db.query(models.Restaurant).filter(models.Restaurant.restaurant_id == restaurant_id).first()
+    if not restaurant:
+        raise HTTPException(status_code=404, detail="Restaurant not found")
+    
+    #return restaurant name and address
+    return restaurant

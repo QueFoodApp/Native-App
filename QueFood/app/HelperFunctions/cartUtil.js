@@ -23,6 +23,16 @@ export async function getCart(userPhoneNumber, restaurantId) {
   return await response.json();
 }
 
+export async function getAllCarts(phone_number) {
+  // Retrieve all carts by customer phone number
+  const response = await fetch(`${API_BASE_URL}/api/carts/${phone_number}`);
+  if (!response.ok && response.status !== 404) {
+    const errorText = await response.text();
+    throw new Error(`getAllCarts failed: ${response.statusText} - ${errorText}`);
+  }
+  return await response.json();
+}
+
 export async function addItemToCart(orderNumber, foodItem) {
   // Add an item to the cart
   const response = await fetch(`${API_BASE_URL}/api/cart/${orderNumber}/items`, {
@@ -66,4 +76,14 @@ export async function checkoutCart(orderNumber) {
     throw new Error(`checkoutCart failed: ${response.statusText}`);
   }
   return await response.json();
+}
+
+export async function getRestaurantName(restaurantId) {
+  // Retrieve the restaurant name by ID
+  const response = await fetch(`${API_BASE_URL}/api/restaurant/${restaurantId}`);
+  if (!response.ok) {
+    throw new Error(`getRestaurantName failed: ${response.statusText}`);
+  }
+  const data = await response.json();
+  return data.restaurant_name; // Assuming the response JSON has a 'restaurant_name' field
 }
