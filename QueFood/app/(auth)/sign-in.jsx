@@ -60,8 +60,9 @@ const SignIn = () => {
   
       const data = await response.json();
       await AsyncStorage.setItem("token", data.access_token); // ✅ Store token
+      await AsyncStorage.setItem("userPhoneNumber", formattedPhoneNumber); // ✅ Store user phone number
       Alert.alert('Success', 'Sign in successful');
-      router.push('/home');
+      router.push('/home'); // Navigate to home screen
     } catch (error) {
       Alert.alert('Error', error.message);
     }
