@@ -57,9 +57,10 @@ const Menu = () => {
 
         if (existingCart && existingCart.restaurant_id === restaurantId) {
           setCart(existingCart);
+          console.log("Existing cart found:", existingCart);
           const quantities = {};
-          if (existingCart.items) {
-            existingCart.items.forEach(item => {
+          if (existingCart.fooditems) {
+            existingCart.fooditems.forEach(item => {
               quantities[item.food_name] = item.quantity;
             });
           }
@@ -72,6 +73,7 @@ const Menu = () => {
         console.error("Failed to setup cart:", error);
       }
     };
+
     setupCart();
   }, [id]);
 
@@ -128,7 +130,7 @@ const Menu = () => {
   const handleCheckout = () => {  
     if (!cart) return;
     console.log("Checkout cart:", cart);
-  }
+  };
 
   const hasItemsInCart = Object.values(itemQuantities).some(quantity => quantity > 0);
 
@@ -237,7 +239,7 @@ const Menu = () => {
           >
             <Text className="text-white font-semibold">
               {Object.values(itemQuantities).reduce((total, quantity) => total + quantity, 0)}{" "}
-              {Object.values(itemQuantities).reduce((total, quantity) => total + quantity, 0) === 1 ? "item" : "items"}
+              {Object.values(itemQuantities).reduce((total, quantity) => total + quantity, 0) === 1 ? "Item" : "Items"}
             </Text>
             <Text className="text-white font-semibold">Checkout</Text>
             <Text className="text-white font-semibold">

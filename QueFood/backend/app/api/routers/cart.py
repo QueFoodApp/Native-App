@@ -94,8 +94,6 @@ def add_item_to_cart(
     """
     Add an item to the cart's fooditems array.
     """
-    print(f"Received item from frontend: {item}")  # Log the received item
-
     cart = db.query(models.OrderTable).filter(
         models.OrderTable.order_number == order_number,
         models.OrderTable.status == "cart"
@@ -115,7 +113,6 @@ def add_item_to_cart(
 
     # Ensure quantity is provided and valid
     quantity = item.get('quantity', 1)
-    print(f"Retrieved quantity from item: {quantity}") #log quantity retrieved from item
     if quantity <= 0:
         raise HTTPException(status_code=400, detail="Quantity must be greater than zero")
 
@@ -124,7 +121,6 @@ def add_item_to_cart(
     current_items = current_items.copy()  # Create a copy to avoid modifying the original list directly
     existing_item_index = -1
 
-    print(f"Current items: {current_items}")
 
     for index, existing_item in enumerate(current_items):
         if existing_item["menu_id"] == menu_item.menu_id and existing_item["food_name"] == menu_item.food_name:
@@ -133,12 +129,10 @@ def add_item_to_cart(
 
     if existing_item_index != -1:
         # Increment the quantity of the existing item
-        print(f"Item already exists, incrementing quantity by: {quantity}") #log when incrementing
         current_items[existing_item_index]["quantity"] += 1
         current_items[existing_item_index]["line_total"] = float(current_items[existing_item_index]["unit_price"]) * current_items[existing_item_index]["quantity"]
     else:
         # Build a new CartItem
-        print(f"Item does not exist, adding new item with quantity: {quantity}") #log when adding
         line_total = float(menu_item.food_price) * quantity
         new_item = {
             "menu_id": menu_item.menu_id,
@@ -148,7 +142,6 @@ def add_item_to_cart(
             "line_total": line_total
         }
         current_items.append(new_item)
-    print(f"Items after update: {current_items}") #log items after update.
 
     # Update the cart's fooditems
     cart.fooditems = current_items
@@ -178,7 +171,6 @@ def remove_item_from_cart(
     """
     Remove an item from the cart by menu_id or decrement its quantity.
     """
-    print(f"Received item from frontend: {item}")  # Log the received item
 
     cart = db.query(models.OrderTable).filter(
         models.OrderTable.order_number == order_number,
@@ -202,8 +194,6 @@ def remove_item_from_cart(
     current_items = current_items.copy()  # Create a copy to avoid modifying the original list directly
     existing_item_index = -1
 
-    print(f"Current items: {current_items}")
-
     for index, existing_item in enumerate(current_items):
         if existing_item["menu_id"] == menu_item.menu_id and existing_item["food_name"] == menu_item.food_name:
             existing_item_index = index
@@ -212,7 +202,6 @@ def remove_item_from_cart(
     if existing_item_index != -1:
         # Decrement the quantity of the existing item
         if current_items[existing_item_index]["quantity"] > 1:
-            print(f"Item already exists, decrementing quantity by: 1")  # Log when decrementing
             current_items[existing_item_index]["quantity"] -= 1
             current_items[existing_item_index]["line_total"] = float(current_items[existing_item_index]["unit_price"]) * current_items[existing_item_index]["quantity"]
         else:
@@ -222,7 +211,6 @@ def remove_item_from_cart(
         # Item not found in cart
         raise HTTPException(status_code=404, detail="Item not found in cart")
 
-    print(f"Items after update: {current_items}")  # Log items after update
 
     # Update the cart's fooditems
     cart.fooditems = current_items
