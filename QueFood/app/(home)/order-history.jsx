@@ -12,9 +12,10 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import API_BASE_URL from '../../config'; 
 
 // ✅ API endpoint
-const API_URL = "http://127.0.0.1:8000/api/customer/orders";
+const API_URL = `${API_BASE_URL}/api/customer/orders`;
 
 // ✅ Fetch order history function
 const fetchOrderHistory = async (setOrders, setLoading) => {

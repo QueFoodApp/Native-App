@@ -6,6 +6,7 @@ import { router } from "expo-router"; // Import router for navigation
 import BottomBar from "../../components/BottomBar";
 import LocationTopBar from "../../components/TopBar"; // Ensure correct import
 import { getRandomFoodImage } from "../HelperFunctions/imageUtils";
+import { useRouter } from "expo-router"; 
 
 const Home = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -69,35 +70,36 @@ const Home = () => {
         </View>
       ) : (
         <FlatList
-          data={restaurants}
-          keyExtractor={(item) => item.restaurant_id.toString()}
-          renderItem={({ item }) => (
-            <View className="bg-white mx-4 mb-4 rounded-lg overflow-hidden shadow-lg">
-              
-              {/* 🖼️ Restaurant Image */}
-              <Image 
-                source={{ uri: item.image }} 
-                className="w-full h-48 bg-gray-200"
-                onError={(e) => console.log("Image failed to load:", item.image, e.nativeEvent.error)} // Debugging
-              />
+            data={restaurants}
+            keyExtractor={(item) => item.restaurant_id.toString()}
+            renderItem={({ item }) => (
+                <TouchableOpacity 
+                onPress={() => router.push({ pathname: "/menu", params: { id: item.restaurant_id, name: item.restaurant_name } })}
+                className="bg-white mx-4 mb-4 rounded-lg overflow-hidden shadow-lg"
+                >
+                {/* 🖼️ Restaurant Image */}
+                <Image 
+                    source={{ uri: item.image }} 
+                    className="w-full h-48 bg-gray-200"
+                />
 
-              {/* 📋 Restaurant Info */}
-              <View className="p-4">
-                <Text className="text-lg font-bold">{item.restaurant_name}</Text>
-                <Text className="text-gray-500">{item.address.street_address}, {item.address.city}</Text>
+                {/* 📋 Restaurant Info */}
+                <View className="p-4">
+                    <Text className="text-lg font-bold">{item.restaurant_name}</Text>
+                    <Text className="text-gray-500">{item.address.street_address}, {item.address.city}</Text>
 
-                {/* ⭐ Rating | 💰 Price */}
-                <View className="flex-row items-center mt-2">
-                  <Text className="text-gray-500">⭐ {item.ratings}</Text>
-                  <Text className="text-gray-500 ml-2">💰 {item.pricing_levels}</Text>
+                    {/* ⭐ Rating | 💰 Price */}
+                    <View className="flex-row items-center mt-2">
+                    <Text className="text-gray-500">⭐ {item.ratings}</Text>
+                    <Text className="text-gray-500 ml-2">💰 {item.pricing_levels}</Text>
+                    </View>
+
+                    {/* 📏 Distance */}
+                    <Text className="text-gray-400 mt-1">{item.distance_km} km away</Text>
                 </View>
-
-                {/* 📏 Distance */}
-                <Text className="text-gray-400 mt-1">{item.distance_km} km away</Text>
-              </View>
-            </View>
-          )}
-        />
+                </TouchableOpacity>
+            )}
+            />
       )}
 
       {/* Bottom Navigation Bar */}

@@ -1,10 +1,9 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime, Boolean, Numeric,DECIMAL
+from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime, Boolean, Numeric, LargeBinary
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from datetime import datetime
 from .database import Base
-
 
 # Address Table
 class Address(Base):
@@ -137,3 +136,19 @@ class Restaurant(Base):
     managers = relationship("ManagerAccount", back_populates="restaurant")
     orders = relationship("OrderTable", back_populates="restaurant")
     address = relationship("Address", back_populates="restaurant", uselist=False)
+    photos = relationship("RestaurantPhotos", back_populates="restaurant")  # ✅ Added
+    
+
+class RestaurantPhotos(Base):
+    __tablename__ = "restaurant_photos"
+
+    photo_id = Column(Integer, primary_key=True, index=True)
+    restaurant_id = Column(Integer, ForeignKey("restaurant_table.restaurant_id"), nullable=False)
+    food_name = Column(String(500), nullable=True)  # Matches menu food_name
+    file_name = Column(String, nullable=False)  # The name of the image file
+    content_type = Column(String, nullable=False)  # e.g., image/jpeg
+    photo_data = Column(LargeBinary, nullable=False)  # The actual image binary data
+    upload_time = Column(DateTime, default=datetime.utcnow)  # Timestamp of upload
+
+    # Relationship with Restaurant
+    restaurant = relationship("Restaurant", back_populates="photos")
