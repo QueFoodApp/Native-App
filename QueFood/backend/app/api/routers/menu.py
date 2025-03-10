@@ -63,7 +63,8 @@ def get_menu(
                 trimmed_food_name = photo.food_name.strip()  # 🔥 Ensure trimming
                 if trimmed_food_name not in photo_dict:
                     photo_dict[trimmed_food_name] = []
-                photo_dict[trimmed_food_name].append(f"http://192.168.68.51:8000/api/photos/{photo.file_name}")
+                photo_dict[trimmed_food_name].append(f"http://localhost:8000/api/photos/{photo.file_name}")
+                #print(photo_dict[trimmed_food_name])
 
         # ✅ Construct Response
         response = []
@@ -71,6 +72,7 @@ def get_menu(
             trimmed_menu_name = menu.food_name.strip()  # 🔥 Trim before lookup
             image_urls = photo_dict.get(trimmed_menu_name, [None])  # Default to None if no images
             for image_url in image_urls:
+                #print(image_url)
                 response.append({
                     "menu_id": menu.menu_id,
                     "food_name": menu.food_name,

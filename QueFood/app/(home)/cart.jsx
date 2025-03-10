@@ -42,7 +42,6 @@ const Cart = () => {
             (cart) => cart.fooditems && cart.fooditems.length > 0
           );
           setCarts(filteredCarts);
-          console.log("Fetched carts:", filteredCarts);
         }
       } else {
         console.log("cartsData is not an array:", cartsData);
@@ -63,7 +62,6 @@ const Cart = () => {
         console.error("User phone number not found.");
         return;
       }
-      console.log("Deleting cart", item);
 
       await deleteCart(userPhoneNumber, item.restaurant_id);
       fetchCarts(); // Refresh carts after deletion

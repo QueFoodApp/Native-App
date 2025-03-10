@@ -28,6 +28,7 @@ const Menu = () => {
       setLoading(true);
       const data = await fetchMenuByRestaurantId(id);
       setMenuItems(data);
+      //console.log("Menu items:", data);
       setLoading(false);
     };
     loadMenu();
@@ -57,7 +58,7 @@ const Menu = () => {
 
         if (existingCart && existingCart.restaurant_id === restaurantId) {
           setCart(existingCart);
-          console.log("Existing cart found:", existingCart);
+          //console.log("Existing cart found:", existingCart);
           const quantities = {};
           if (existingCart.fooditems) {
             existingCart.fooditems.forEach(item => {
@@ -180,6 +181,7 @@ const Menu = () => {
                 <Text className="text-xl font-semibold mb-2">{categoryName}</Text>
                 {items.map((foodItem, idx) => {
                   const quantity = getQuantityForItem(foodItem);
+                  //console.log("image url", foodItem.image_url);
 
                   return (
                     <View
@@ -191,7 +193,6 @@ const Menu = () => {
                         <Image
                           source={{ uri: foodItem.image_url }}
                           className="w-24 h-24 rounded-lg mr-4"
-                          style={{ resizeMode: "cover" }}
                         />
                       )}
 
