@@ -23,8 +23,6 @@ export const fetchNearbyRestaurants = async () => {
     return [];
   }
 };
-
-export default apiUtil;
 export const fetchMenuByRestaurantId = async (restaurantId) => {
   try {
     const response = await fetch(`${API_BASE_URL}/api/menu/${restaurantId}`);
@@ -37,3 +35,9 @@ export const fetchMenuByRestaurantId = async (restaurantId) => {
     return [];
   }
 };
+
+export default {
+  fetchNearbyRestaurants,
+  fetchMenuByRestaurantId,
+};
+

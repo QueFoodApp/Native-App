@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime, Boolean, Numeric, LargeBinary
+from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime, Boolean, Numeric, LargeBinary, DECIMAL
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
