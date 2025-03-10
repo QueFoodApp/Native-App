@@ -130,6 +130,8 @@ const Menu = () => {
   const handleCheckout = () => {  
     if (!cart) return;
     console.log("Checkout cart:", cart);
+    // Implement checkout logic here (e.g. navigate to checkout screen)
+    //TODO 
   };
 
   const hasItemsInCart = Object.values(itemQuantities).some(quantity => quantity > 0);
