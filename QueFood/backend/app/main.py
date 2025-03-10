@@ -22,18 +22,21 @@ app.include_router(customer_router, prefix="/api/customer", tags=["Customer"])
 app.include_router(menu.router, prefix="/api/menu", tags=["Menu"])
 app.include_router(photo.router, prefix="/api", tags=["Photos"])
 
-# Add Payment Endpoint
+# Payment Intent endpoint
 @app.post("/api/payment-intent")
 async def create_payment_intent():
     try:
-        # Set minimum amount to 50 cents (50 in cents)
+        # Create a PaymentIntent on your server
         intent = stripe.PaymentIntent.create(
-            amount=50,  # 50 cents ($0.50 USD)
-            currency="usd",  # Change if needed
+            amount=50,  # Amount in cents -> $0.50
+            currency="usd",
+            automatic_payment_methods={"enabled": True},
         )
+        # Return ONLY the client_secret to the frontend
         return {"client_secret": intent.client_secret}
     except Exception as e:
         return {"error": str(e)}
+
 
 # Root route
 @app.get("/")

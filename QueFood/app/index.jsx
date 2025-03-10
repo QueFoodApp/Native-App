@@ -21,15 +21,22 @@ export default function Onboarding() {
             The best way to enjoy your food experience. Continue to start ordering.
           </Text>
 
-          {/* Continue Button */}
+          {/* Continue Button for Sign-in */}
           <Button
             containerStyles="w-full mt-7"
             handlePress={() => router.push('/sign-in')}
             title="Continue With Phone" 
           />
+
+          {/* Test Payment Button */}
+          <Button
+            containerStyles="w-full mt-7"
+            handlePress={() => router.push('/payment')}  // Navigate to payment screen
+            title="Test Payment" 
+          />
         </View>
       </ScrollView>
-      
+
       <StatusBar style="dark" />
     </SafeAreaView>
   );
