@@ -100,7 +100,7 @@ def get_customer_orders(
             "subtotal": order.subtotal,
             "taxes": order.taxes,
             "fooditems": order.fooditems,  # Assuming fooditems is JSON-serializable
-            "total": order.total,
+            "total": order.subtotal + order.taxes,
             "restaurant_name": order.restaurant_name,
             "state": order.state,
             "city": order.city,
