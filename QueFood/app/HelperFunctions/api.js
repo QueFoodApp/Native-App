@@ -23,3 +23,9 @@ export const fetchNearbyRestaurants = async () => {
     return [];
   }
 };
+
+const apiUtil = {
+  fetchNearbyRestaurants,
+};
+
+export default apiUtil;
