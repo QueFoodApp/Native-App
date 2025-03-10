@@ -26,11 +26,10 @@ export async function getCart(userPhoneNumber, restaurantId) {
 export async function addItemToCart(orderNumber, foodItem) {
   // Add an item to the cart
   const response = await fetch(`${API_BASE_URL}/api/cart/${orderNumber}/items`, {
-    method: "POST",
+    method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({  menu_id: foodItem.menu_id,
-        food_name: foodItem.food_name,
-        quantity: 1, }),
+        food_name: foodItem.food_name, }),
   });
   if (!response.ok) {
     throw new Error(`addItemToCart failed: ${response.statusText}`);

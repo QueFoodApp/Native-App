@@ -84,7 +84,7 @@ def get_cart(
 
     return cart
 
-@router.post("/cart/{order_number}/items", response_model=schemas.CartRead)
+@router.put("/cart/{order_number}/items", response_model=schemas.CartRead)
 def add_item_to_cart(
     order_number: str,
     item: Dict,  # Change to Dict
@@ -101,10 +101,12 @@ def add_item_to_cart(
     if not cart:
         raise HTTPException(status_code=404, detail="Cart not found or not open")
 
-    print(f"Received item: {item}")
-
     # Fetch menu info
-    menu_item = db.query(models.Menu).filter(models.Menu.menu_id == item['menu_id'], models.Menu.food_name == item['food_name'], models.Menu.restaurant_id == cart.restaurant_id).first()
+    menu_item = db.query(models.Menu).filter(
+        models.Menu.menu_id == item['menu_id'],
+        models.Menu.food_name == item['food_name'],
+        models.Menu.restaurant_id == cart.restaurant_id
+    ).first()
     if not menu_item:
         raise HTTPException(status_code=404, detail="Menu item not found")
 
@@ -113,23 +115,35 @@ def add_item_to_cart(
     if quantity <= 0:
         raise HTTPException(status_code=400, detail="Quantity must be greater than zero")
 
-    # Build a CartItem
-    line_total = float(menu_item.food_price) * quantity
-    new_item = {
-        "menu_id": menu_item.menu_id,
-        "food_name": menu_item.food_name,
-        "quantity": quantity,
-        "unit_price": float(menu_item.food_price),
-        "line_total": line_total
-    }
-
-    # Append to existing JSON array
+    # Check if the item already exists in the cart
     current_items = cart.fooditems or []
-    current_items = current_items.copy()
-    print(f"Before appending, current_items: {current_items}")
-    print(f"Appending new item: {new_item}")
-    current_items.append(new_item)
-    print(f"After appending, current_items: {current_items}")
+    current_items = current_items.copy()  # Create a copy to avoid modifying the original list directly
+    existing_item_index = -1
+
+    print(f"Current items: {current_items}")
+
+    for index, existing_item in enumerate(current_items):
+        if existing_item["menu_id"] == menu_item.menu_id and existing_item["food_name"] == menu_item.food_name:
+            existing_item_index = index
+            break
+
+    if existing_item_index != -1:
+        # Increment the quantity of the existing item
+        current_items[existing_item_index]["quantity"] += quantity
+        current_items[existing_item_index]["line_total"] = float(current_items[existing_item_index]["unit_price"]) * current_items[existing_item_index]["quantity"]
+    else:
+        # Build a new CartItem
+        line_total = float(menu_item.food_price) * quantity
+        new_item = {
+            "menu_id": menu_item.menu_id,
+            "food_name": menu_item.food_name,
+            "quantity": quantity,
+            "unit_price": float(menu_item.food_price),
+            "line_total": line_total
+        }
+        current_items.append(new_item)
+
+    # Update the cart's fooditems
     cart.fooditems = current_items
 
     # Recalculate
@@ -139,7 +153,7 @@ def add_item_to_cart(
 
     db.commit()
     db.refresh(cart)
-    return cart 
+    return cart
 
 @router.delete("/cart/{order_number}/items/{menu_id}", response_model=schemas.CartRead)
 def remove_item_from_cart(
