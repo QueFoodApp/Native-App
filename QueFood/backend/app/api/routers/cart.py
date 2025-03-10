@@ -169,15 +169,17 @@ def add_item_to_cart(
     print(f"Cart after commit: {cart.fooditems}") #log cart after commit.
     return cart
 
-@router.delete("/cart/{order_number}/items/{menu_id}", response_model=schemas.CartRead)
+@router.put("/cart/{order_number}/items/{menu_id}", response_model=schemas.CartRead)
 def remove_item_from_cart(
     order_number: str,
-    menu_id: int,
+    item: Dict,  # Use item dictionary for consistency
     db: Session = Depends(get_db)
 ):
     """
-    Remove an item from the cart by menu_id.
+    Remove an item from the cart by menu_id or decrement its quantity.
     """
+    print(f"Received item from frontend: {item}")  # Log the received item
+
     cart = db.query(models.OrderTable).filter(
         models.OrderTable.order_number == order_number,
         models.OrderTable.status == "cart"
@@ -186,15 +188,59 @@ def remove_item_from_cart(
     if not cart:
         raise HTTPException(status_code=404, detail="Cart not found or not open")
 
-    updated_items = [x for x in cart.fooditems if x["menu_id"] != menu_id]
-    cart.fooditems = updated_items
+    # Fetch menu info (optional, but good for validation)
+    menu_item = db.query(models.Menu).filter(
+        models.Menu.menu_id == item['menu_id'],
+        models.Menu.food_name == item['food_name'],
+        models.Menu.restaurant_id == cart.restaurant_id
+    ).first()
+    if not menu_item:
+        raise HTTPException(status_code=404, detail="Menu item not found")
 
-    cart.items_count = sum(i["quantity"] for i in updated_items)
-    cart.subtotal = sum(i["line_total"] for i in updated_items)
-    cart.taxes = round(cart.subtotal * 0.1, 2)
+    # Check if the item already exists in the cart
+    current_items = cart.fooditems or []
+    current_items = current_items.copy()  # Create a copy to avoid modifying the original list directly
+    existing_item_index = -1
 
-    db.commit()
+    print(f"Current items: {current_items}")
+
+    for index, existing_item in enumerate(current_items):
+        if existing_item["menu_id"] == menu_item.menu_id and existing_item["food_name"] == menu_item.food_name:
+            existing_item_index = index
+            break
+
+    if existing_item_index != -1:
+        # Decrement the quantity of the existing item
+        if current_items[existing_item_index]["quantity"] > 1:
+            print(f"Item already exists, decrementing quantity by: 1")  # Log when decrementing
+            current_items[existing_item_index]["quantity"] -= 1
+            current_items[existing_item_index]["line_total"] = float(current_items[existing_item_index]["unit_price"]) * current_items[existing_item_index]["quantity"]
+        else:
+            print(f"Item exists with quantity 1, removing item")  # Log when removing
+            del current_items[existing_item_index]
+    else:
+        # Item not found in cart
+        raise HTTPException(status_code=404, detail="Item not found in cart")
+
+    print(f"Items after update: {current_items}")  # Log items after update
+
+    # Update the cart's fooditems
+    cart.fooditems = current_items
+
+    flag_modified(cart, "fooditems")
+
+    # Recalculate
+    cart.items_count = sum(i["quantity"] for i in current_items)
+    cart.subtotal = sum(i["line_total"] for i in current_items)
+    cart.taxes = round(cart.subtotal * 0.1, 2)  # example 10% tax
+
+    db.flush()
+    try:
+        db.commit()
+    except Exception as e:
+        print(f"Error during commit: {e}")
     db.refresh(cart)
+    print(f"Cart after commit: {cart.fooditems}")  # Log cart after commit
     return cart
 
 @router.post("/cart/{order_number}/checkout", response_model=schemas.CartRead)

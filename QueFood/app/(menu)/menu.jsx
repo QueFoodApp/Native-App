@@ -89,7 +89,7 @@ const Menu = () => {
         const currentQuantity = itemQuantities[foodItem.food_name] || 0;
         const foodItemWithQuantity = {
             ...foodItem,
-            quantity: currentQuantity + 1, // Add the quantity here
+            quantity: currentQuantity + 1, 
         };
         const updatedCart = await addItemToCart(cart.order_number, foodItemWithQuantity);
         setCart(updatedCart);
@@ -105,17 +105,17 @@ const Menu = () => {
   const handleRemoveFromCart = async (foodItem) => {
     if (!cart) return;
     try {
-      const updatedCart = await removeItemFromCart(cart.order_number, foodItem);
+      const currentQuantity = itemQuantities[foodItem.food_name] || 1;
+      const foodItemWithQuantity = {
+          ...foodItem,
+          quantity: currentQuantity - 1, 
+      };
+      const updatedCart = await removeItemFromCart(cart.order_number, cart.menu_id, foodItemWithQuantity);
       setCart(updatedCart);
-      setItemQuantities(prevQuantities => {
-        const newQuantities = { ...prevQuantities };
-        if (newQuantities[foodItem.food_name] > 1) {
-          newQuantities[foodItem.food_name] -= 1;
-        } else {
-          delete newQuantities[foodItem.food_name];
-        }
-        return newQuantities;
-      });
+      setItemQuantities(prevQuantities => ({
+        ...prevQuantities,
+        [foodItem.food_name]: (prevQuantities[foodItem.food_name] || 1) - 1
+    }));
     } catch (error) {
       console.error("Remove from cart error:", error.message);
     }
