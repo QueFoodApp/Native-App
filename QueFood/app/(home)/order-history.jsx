@@ -40,7 +40,7 @@ const fetchOrderHistory = async (setOrders, setLoading) => {
     if (response.ok && Array.isArray(data.orders)) {
       setOrders(data.orders);
     } else {
-      console.error("Error fetching orders:", data.detail);
+      console.log("Error fetching orders:", data.detail);
       setOrders([]);
     }
   } catch (error) {
