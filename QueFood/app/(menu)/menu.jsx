@@ -1,21 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, View, Text, ActivityIndicator, FlatList, Image, TouchableOpacity } from "react-native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchMenuByRestaurantId } from "../HelperFunctions/api";
 import { getRandomFoodImage } from "../HelperFunctions/imageUtils";
-import { Ionicons } from "@expo/vector-icons"; // For back button
-import { Dimensions } from "react-native"; 
-
-const screenHeight = Dimensions.get("window").height;
+import { createOrGetCart, addItemToCart, getCart, getCartByCustomerAndRestaurant } from "../HelperFunctions/cartUtil";
 
 const Menu = () => {
-  const { id, name } = useLocalSearchParams(); 
-  const navigation = useNavigation(); // For handling navigation
+  const { id, name } = useLocalSearchParams();
+  const navigation = useNavigation();
+
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const restaurantImage = getRandomFoodImage(id); 
+  const [cart, setCart] = useState(null);
+  const [userPhoneNumber, setUserPhoneNumber] = useState(null);
 
-  // Hide default header
+  const restaurantImage = getRandomFoodImage(id);
+
   useEffect(() => {
     navigation.setOptions({ headerShown: false });
   }, [navigation]);
@@ -27,11 +29,44 @@ const Menu = () => {
       setMenuItems(data);
       setLoading(false);
     };
-
     loadMenu();
   }, [id]);
 
-  // Group menu items by category
+  useEffect(() => {
+    const setupCart = async () => {
+      try {
+        const restaurantId = parseInt(id, 10);
+        const userPhoneNumber = await AsyncStorage.getItem("userPhoneNumber");
+        if (!userPhoneNumber) {
+          console.error("User phone number not found. Redirect to login.");
+          return;
+        }
+        setUserPhoneNumber(userPhoneNumber);
+
+        let existingCart;
+        try {
+          existingCart = await getCart(userPhoneNumber, restaurantId);
+        } catch (error) {
+          if (error.message.includes("Cart not found")) {
+            console.log("No existing cart found, creating a new one.");
+          } else {
+            throw error;
+          }
+        }
+
+        if (existingCart && existingCart.restaurant_id === restaurantId) {
+          setCart(existingCart);
+        } else {
+          const newCart = await createOrGetCart(userPhoneNumber, restaurantId);
+          setCart(newCart);
+        }
+      } catch (error) {
+        console.error("Failed to setup cart:", error);
+      }
+    };
+    setupCart();
+  }, [id]);
+
   const groupedMenu = menuItems.reduce((acc, item) => {
     if (!acc[item.category]) {
       acc[item.category] = [];
@@ -40,33 +75,43 @@ const Menu = () => {
     return acc;
   }, {});
 
+  const handleAddToCart = async (foodItem) => {
+    if (!cart) return;
+    try {
+      const updatedCart = await addItemToCart(cart.order_number, foodItem);
+      setCart(prevCart => ({...prevCart, ...updatedCart}));
+    } catch (error) {
+      console.error("Add to cart error:", error.message);
+    }
+  };
+
+  const handleCheckout = () => {
+    if (!cart || cart.items_count === 0) {
+      console.log("Cart is empty.");
+      return;
+    }
+    console.log("Checkout cart:", cart);
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-white">
-      {/* 🔥 Restaurant Header Section */}
       <View className="h-56 relative">
-        {/* Background Image */}
-        <Image 
-          source={{ uri: restaurantImage }} 
+        <Image
+          source={{ uri: restaurantImage }}
           className="absolute w-full h-full"
           style={{ resizeMode: "cover" }}
         />
-
-        {/* Overlay for readability */}
         <View className="absolute w-full h-full bg-black opacity-20" />
 
-        {/* 🔥 Custom Back Button */}
-        <TouchableOpacity 
-          onPress={() => navigation.goBack()} 
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
           className="absolute top-12 left-4 bg-white p-2 rounded-full shadow-lg"
         >
           <Ionicons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
 
-        {/* Restaurant Details */}
         <View className="absolute bottom-4 left-4 right-4">
           <Text className="text-white text-2xl font-bold">{name}</Text>
-
-          {/* Action Buttons */}
           <View className="flex-row mt-3">
             <TouchableOpacity className="bg-white px-4 py-2 rounded-full mr-3 shadow-lg">
               <Text className="text-black font-semibold">Right Now</Text>
@@ -86,44 +131,71 @@ const Menu = () => {
         <FlatList
           data={Object.entries(groupedMenu)}
           keyExtractor={(item, index) => `${item[0]}-${index}`}
-          renderItem={({ item }) => (
-            <View className="mt-6 px-4">
-              {/* Category Header */}
-              <Text className="text-xl font-semibold mb-2">{item[0]}</Text>
-              {item[1].map((foodItem, foodIndex) => (
-                <TouchableOpacity
-                  key={`${foodItem.menu_id}-${foodIndex}`} 
-                  disabled={foodItem.availability !== "available"}
-                  className="flex-row items-center py-4 border-b border-gray-300"
-                  style={{
-                    opacity: foodItem.availability === "available" ? 1 : 0.5,
-                  }}
-                >
-                  {/* Image */}
-                  {foodItem.image_url && (
-                    <Image
-                      source={{ uri: foodItem.image_url }}
-                      className="w-24 h-24 rounded-lg mr-4"
-                      style={{ resizeMode: "cover" }}
-                    />
-                  )}
+          renderItem={({ item }) => {
+            const [categoryName, items] = item;
+            return (
+              <View className="mt-6 px-4">
+                <Text className="text-xl font-semibold mb-2">{categoryName}</Text>
+                {items.map((foodItem, idx) => (
+                  <View
+                    key={`${foodItem.menu_id}-${idx}`}
+                    className="flex-row items-center py-4 border-b border-gray-300"
+                    style={{ opacity: foodItem.availability === "available" ? 1 : 0.5 }}
+                  >
+                    {foodItem.image_url && (
+                      <Image
+                        source={{ uri: foodItem.image_url }}
+                        className="w-24 h-24 rounded-lg mr-4"
+                        style={{ resizeMode: "cover" }}
+                      />
+                    )}
 
-                  {/* Food Details */}
-                  <View className="flex-1">
-                    <Text className="text-lg font-semibold">{foodItem.food_name}</Text>
-                    <Text className="text-gray-500">{foodItem.food_description}</Text>
-                    <Text className="text-black font-bold mt-1">${foodItem.food_price.toFixed(2)}</Text>
+                    <View className="flex-1">
+                      <Text className="text-lg font-semibold">{foodItem.food_name}</Text>
+                      <Text className="text-gray-500">{foodItem.food_description || "No description"}</Text>
+                      <Text className="text-black font-bold mt-1">
+                        ${foodItem.food_price.toFixed(2)}
+                      </Text>
 
-                    {/* Show "Not Available" if item is unavailable */}
-                    {foodItem.availability !== "available" && (
-                      <Text className="text-red-500 font-semibold mt-1">Not available to order</Text>
+                      {foodItem.availability !== "available" && (
+                        <Text className="text-red-500 font-semibold mt-1">
+                          Not available to order
+                        </Text>
+                      )}
+                    </View>
+
+                    {foodItem.availability === "available" && (
+                      <TouchableOpacity
+                        onPress={() => handleAddToCart(foodItem)}
+                        className="bg-blue-500 px-3 py-2 rounded-md"
+                      >
+                        <Text className="text-white font-semibold">Add</Text>
+                      </TouchableOpacity>
                     )}
                   </View>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
+                ))}
+              </View>
+            );
+          }}
         />
+      )}
+
+      {cart && cart.items_count > 0 && (
+        <View className="absolute bottom-0 left-0 w-full px-4 pb-6">
+          <TouchableOpacity
+            onPress={handleCheckout}
+            activeOpacity={0.8}
+            className="bg-black flex-row items-center justify-between rounded-full px-6 py-4 shadow-lg"
+          >
+            <Text className="text-white font-semibold">
+              {cart.items_count} {cart.items_count === 1 ? "item" : "items"}
+            </Text>
+            <Text className="text-white font-semibold">Checkout</Text>
+            <Text className="text-white font-semibold">
+              ${cart.subtotal.toFixed(2)}
+            </Text>
+          </TouchableOpacity>
+        </View>
       )}
     </SafeAreaView>
   );

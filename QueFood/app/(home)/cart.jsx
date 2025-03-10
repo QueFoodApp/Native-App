@@ -4,10 +4,6 @@ import { Ionicons } from '@expo/vector-icons';
 
 const Cart = () => {
 
-  const handleShoppingPress = () => {
-    console.log("Shopping button pressed");
-    // not sure what to do here either 
-  };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -34,13 +30,6 @@ const Cart = () => {
           Once you add items from a restaurant or store, your cart will appear here.
         </Text>
 
- 
-        <TouchableOpacity
-          className="bg-black px-5 py-3 rounded-full"
-          onPress={handleShoppingPress}
-        >
-          <Text className="text-white font-medium">Shopping</Text>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );

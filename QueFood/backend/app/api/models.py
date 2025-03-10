@@ -94,12 +94,11 @@ class OrderTable(Base):
     status = Column(String(50), nullable=True, default="Pending")
     customer_id = Column(Integer, ForeignKey("customer_account_table.customer_id"), nullable=False)
     restaurant_id = Column(Integer, ForeignKey("restaurant_table.restaurant_id"), nullable=False)
-    restaurant_name = Column(String(255), nullable=True)  # ✅ Added restaurant_name
+    restaurant_name = Column(String(255), nullable=True) 
     items_count = Column(Integer, nullable=False, default=1)
     subtotal = Column(Float, nullable=False, default=0.0)
     taxes = Column(Float, nullable=False, default=0.0)
-    fooditems = Column(JSON, nullable=False)  # ✅ Stored as JSON for flexibility
-    total = Column(Float, nullable=False, default=0.0)
+    fooditems = Column(JSON, nullable=False)  
 
     # ✅ New Address Columns
     state = Column(String(255), nullable=True)

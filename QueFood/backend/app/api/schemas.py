@@ -2,28 +2,6 @@ from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime
 
-# # Address Schemas
-# class AddressCreate(BaseModel):
-#     state: str
-#     city: str
-#     street_address: str
-#     postal_code: int
-#     latitude: Optional[float] = None
-#     longitude: Optional[float] = None
-
-# class AddressOut(BaseModel):
-#     restaurant_id: int
-#     state: str
-#     city: str
-#     street_address: str
-#     postal_code: int
-#     latitude: Optional[float] = None
-#     longitude: Optional[float] = None
-
-#     class Config:
-#         orm_mode = True
-
-
 # Customer Account Schemas
 class CustomerAccountCreate(BaseModel):
     manager_account_name: str = Field(..., min_length=3, max_length=255)
@@ -36,7 +14,7 @@ class CustomerAccountOut(BaseModel):
     customer_id: int
     manager_account_name: str
     phone_number: Optional[str]
-    email: Optional[str]  # Add this line
+    email: Optional[str]  
     address: Optional[str]
 
     class Config:
@@ -69,83 +47,36 @@ class ChangePasswordRequest(BaseModel):
     phone_number: str = Field(..., min_length=10, max_length=10)
     new_password: str = Field(..., min_length=6, max_length=255)
 
+class CartItem(BaseModel):
+    menu_id: int
+    food_name: str
+    quantity: int
+    unit_price: float
+    line_total: float
 
-# # Manager Account Schemas
-# class ManagerAccountCreate(BaseModel):
-#     restaurant_id: int
-#     manager_account_name: str = Field(..., min_length=3, max_length=255)
-#     manager_account_password: str = Field(..., min_length=6, max_length=255)
+class CartCreate(BaseModel):
+    phone_number: str = Field(..., min_length=10, max_length=10)
+    restaurant_id: int
 
-# class ManagerAccountOut(BaseModel):
-#     manager_id: int
-#     restaurant_id: int
-#     manager_account_name: str
+class CartAddItem(BaseModel):
+    menu_id: int
+    quantity: int
 
-#     class Config:
-#         orm_mode = True
+class CartRemoveItem(BaseModel):
+    menu_id: int
 
+class CartRead(BaseModel):
+    order_number: str
+    status: str
+    customer_id: int
+    restaurant_id: int
+    items_count: int
+    subtotal: float
+    taxes: float
+    fooditems: List[CartItem] = []
+    due_date: Optional[datetime] = None
 
-# # Menu Schemas
-# class MenuCreate(BaseModel):
-#     restaurant_id: int
-#     category: str
-#     food_name: str
-#     food_description: Optional[str]
-#     food_price: float
-#     availability: bool = True
-
-# class MenuOut(BaseModel):
-#     menu_id: int
-#     restaurant_id: int
-#     category: str
-#     food_name: str
-#     food_description: Optional[str]
-#     food_price: float
-#     availability: bool
-
-#     class Config:
-#         orm_mode = True
+    class Config:
+        from_attributes = True  # Pydantic v2 replacement for orm_mode
 
 
-# # Order Schemas
-# class OrderCreate(BaseModel):
-#     customer_id: int
-#     restaurant_id: int
-#     items_count: int
-#     subtotal: float
-#     taxes: float
-#     fooditems: Optional[str]  # JSON or serialized data
-#     total: float
-
-# class OrderOut(BaseModel):
-#     order_number: str
-#     due_date: datetime
-#     status: Optional[str]
-#     customer_id: int
-#     restaurant_id: int
-#     items_count: int
-#     subtotal: float
-#     taxes: float
-#     fooditems: Optional[str]
-#     total: float
-
-#     class Config:
-#         orm_mode = True
-
-
-# # Restaurant Schemas
-# class RestaurantCreate(BaseModel):
-#     restaurant_name: str
-#     ratings: Optional[float]
-#     restaurant_type: Optional[str]
-#     pricing_levels: Optional[str]
-
-# class RestaurantOut(BaseModel):
-#     restaurant_id: int
-#     restaurant_name: str
-#     ratings: Optional[float]
-#     restaurant_type: Optional[str]
-#     pricing_levels: Optional[str]
-
-#     class Config:
-#         orm_mode = True

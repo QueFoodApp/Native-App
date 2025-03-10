@@ -42,7 +42,6 @@ def get_menu(
         result = db.execute(menu_sql, params)
         menu_items = result.fetchall()
 
-        logging.debug(f"✅ Total Menu Items Fetched: {len(menu_items)}")
 
         if not menu_items:
             return []  # If no menu items exist, return an empty array
@@ -56,7 +55,6 @@ def get_menu(
         photo_result = db.execute(photo_sql, {"restaurant_id": restaurant_id})
         photos = photo_result.fetchall()
 
-        logging.debug(f"✅ Total Photos Fetched: {len(photos)}")
 
         # ✅ Organize Photos by Food Name
         photo_dict = {}
@@ -72,7 +70,6 @@ def get_menu(
         for menu in menu_items:
             trimmed_menu_name = menu.food_name.strip()  # 🔥 Trim before lookup
             image_urls = photo_dict.get(trimmed_menu_name, [None])  # Default to None if no images
-
             for image_url in image_urls:
                 response.append({
                     "menu_id": menu.menu_id,
@@ -86,7 +83,6 @@ def get_menu(
                     "image_url": image_url  # ✅ Ensure image_url is set correctly
                 })
 
-        logging.debug(f"✅ Final Response Count: {len(response)} (Expected: {len(menu_items)})")
         return response
 
     except Exception as e:
