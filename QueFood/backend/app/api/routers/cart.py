@@ -317,3 +317,30 @@ def get_all_carts_by_restaurant(
     
     #return restaurant name and address
     return restaurant
+
+#delete cart
+@router.delete("/cart/{phone_number}/{restaurant_id}", response_model=schemas.CartRead)
+def delete_cart(
+    phone_number: str,
+    restaurant_id: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Delete a cart by customer phone number and restaurant ID.
+    """
+    customer = db.query(models.CustomerAccount).filter(models.CustomerAccount.phone_number == phone_number).first()
+    if not customer:
+        raise HTTPException(status_code=404, detail="Customer not found")
+
+    cart = db.query(models.OrderTable).filter(
+        models.OrderTable.customer_id == customer.customer_id,
+        models.OrderTable.restaurant_id == restaurant_id,
+        models.OrderTable.status == "cart"
+    ).first()
+
+    if not cart:
+        raise HTTPException(status_code=404, detail="Cart not found")
+
+    db.delete(cart)
+    db.commit()
+    return cart

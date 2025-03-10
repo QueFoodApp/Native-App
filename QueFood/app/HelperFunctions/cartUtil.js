@@ -87,3 +87,14 @@ export async function getRestaurantName(restaurantId) {
   const data = await response.json();
   return data.restaurant_name; // Assuming the response JSON has a 'restaurant_name' field
 }
+
+//delete cart
+export async function deleteCart(phone_number, restaurant_id) {
+  const response = await fetch(`${API_BASE_URL}/api/cart/${phone_number}/${restaurant_id}`, {
+    method: "DELETE",
+  });
+  if (!response.ok) {
+    throw new Error(`deleteCart failed: ${response.statusText}`);
+  }
+  return await response.json();
+}
