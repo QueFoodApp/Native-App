@@ -46,13 +46,16 @@ const OrderDetails = () => {
                             Order #{order.order_number}
                         </Text>
                         <View className="flex-row items-center">
-                            <Ionicons name="radio-button-on-outline" size={16} color="gray" />
+                            <Ionicons 
+                                name="radio-button-on-outline" 
+                                size={16} 
+                                color={order.status.toLowerCase() === "cancelled" ? "red" : "green"} 
+                            />
                             <Text className="text-gray-700 ml-1 capitalize">{order.status}</Text>
                         </View>
+
                     </View>
-                    <Text className="text-gray-500 mt-1">
-                        Pickup Time: {order.pickup_time || "Pending"}
-                    </Text>
+                    
 
                     {/* 🗺️ Map View */}
                     <View style={styles.mapContainer}>
@@ -84,7 +87,7 @@ const OrderDetails = () => {
                                 {item.quantity} x {item.food_name}
                             </Text>
                             <Text className="text-gray-700">
-                                ${(item.food_price).toFixed(2)}
+                                ${(item.unit_price).toFixed(2)}
                             </Text>
                         </View>
                     ))}

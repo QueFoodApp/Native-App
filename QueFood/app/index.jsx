@@ -27,13 +27,6 @@ export default function Onboarding() {
             handlePress={() => router.push('/sign-in')}
             title="Continue With Phone" 
           />
-
-          {/* Test Payment Button */}
-          <Button
-            containerStyles="w-full mt-7"
-            handlePress={() => router.push('/payment')}  // Navigate to payment screen
-            title="Test Payment" 
-          />
         </View>
       </ScrollView>
 
