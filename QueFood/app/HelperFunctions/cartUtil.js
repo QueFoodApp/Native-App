@@ -98,3 +98,30 @@ export async function deleteCart(phone_number, restaurant_id) {
   }
   return await response.json();
 }
+
+export async function getCartByOrderNumber(orderNumber) {
+  // Fetch a cart using order number directly
+  const response = await fetch(`${API_BASE_URL}/api/cart/${orderNumber}`);
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`getCartByOrderNumber failed: ${response.statusText} - ${errorText}`);
+  }
+  return await response.json();
+}
+
+export const getRestaurantDetails = async (restaurantId) => {
+  try {
+      const response = await fetch(`${API_BASE_URL}/restaurant/${restaurantId}`);
+      if (!response.ok) {
+          throw new Error(`Failed to fetch restaurant details for ID: ${restaurantId}`);
+      }
+      const data = await response.json();
+      return data;
+  } catch (error) {
+      console.error("❌ Error fetching restaurant details:", error);
+      return null;
+  }
+};
+
+
+

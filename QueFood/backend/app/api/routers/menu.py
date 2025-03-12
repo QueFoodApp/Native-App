@@ -4,6 +4,10 @@ from sqlalchemy.sql import text  # ✅ Import text()
 from app.api.database import get_db
 from typing import List, Optional
 import logging
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 router = APIRouter()
 logging.basicConfig(level=logging.DEBUG)  # ✅ Enable Debug Logging
@@ -64,7 +68,6 @@ def get_menu(
                 if trimmed_food_name not in photo_dict:
                     photo_dict[trimmed_food_name] = []
                 photo_dict[trimmed_food_name].append(f"http://localhost:8000/api/photos/{photo.file_name}")
-                #print(photo_dict[trimmed_food_name])
 
         # ✅ Construct Response
         response = []

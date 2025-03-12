@@ -160,7 +160,7 @@ const OrderHistory = () => {
                 >
                   <Ionicons name="book" size={18} color="black" />
                   <Text className="text-black font-medium ml-2">
-                    View Details
+                    View Det
                   </Text>
                 </TouchableOpacity>
 

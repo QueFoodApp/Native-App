@@ -31,6 +31,12 @@ def create_or_get_cart(
     ).first()
     if not restaurant:
         raise HTTPException(status_code=404, detail="Restaurant not found")
+    
+    address = db.query(models.Address).filter(
+        models.Address.restaurant_id == cart_data.restaurant_id
+    ).first()
+    if not address:
+        raise HTTPException(status_code=404, detail="Address not found")
 
     # Check if there's already an open cart for this customer
     existing_cart = db.query(models.OrderTable).filter(
@@ -63,10 +69,17 @@ def create_or_get_cart(
         status="cart",
         customer_id=customer.customer_id,
         restaurant_id=cart_data.restaurant_id,
+        restaurant_name=restaurant.restaurant_name,
         items_count=0,
         subtotal=0.0,
         taxes=0.0,
-        fooditems=[]
+        fooditems=[],
+        state = address.state,
+        city = address.city,
+        street_address = address.street_address,
+        postal_code = address.postal_code,
+        latitude = address.latitude,
+        longitude = address.longitude
     )
     db.add(new_cart)
     db.commit()
@@ -74,13 +87,15 @@ def create_or_get_cart(
     return new_cart
 
 @router.get("/cart/{order_number}", response_model=schemas.CartRead)
-def get_cart(
-    order_number: str,
-    db: Session = Depends(get_db)
-):
+def get_cart(order_number: str, db: Session = Depends(get_db)):
     """
     Retrieve a cart by order_number.
     """
+    if not order_number:
+        raise HTTPException(status_code=400, detail="Order number is required")
+
+    print(f"📥 Received request for order_number: {order_number}")
+
     cart = db.query(models.OrderTable).filter(
         models.OrderTable.order_number == order_number,
         models.OrderTable.status == "cart"
@@ -89,7 +104,40 @@ def get_cart(
     if not cart:
         raise HTTPException(status_code=404, detail="Cart not found or not open")
 
+    print(f"✅ Cart found: {cart}")
+    
     return cart
+
+
+@router.put("/cart/{order_number}/prepare", response_model=schemas.CartRead)
+def prepare_order(
+    order_number: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Update the status of an order to 'prepare' by order_number.
+    """
+    # Fetch the order
+    order = db.query(models.OrderTable).filter(
+        models.OrderTable.order_number == order_number
+    ).first()
+
+    # Handle case where order is not found
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    # Update the status to 'prepare'
+    order.status = "prepare"
+
+    # Commit changes to the database
+    db.commit()
+    db.refresh(order)
+
+    print(f"✅ Order {order_number} status updated to 'prepare'")
+
+    return order
+
+
 
 @router.put("/cart/{order_number}/items", response_model=schemas.CartRead)
 def add_item_to_cart(

@@ -6,6 +6,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchMenuByRestaurantId } from "../HelperFunctions/api";
 import { getRandomFoodImage } from "../HelperFunctions/imageUtils";
 import { createOrGetCart, addItemToCart, getCart, removeItemFromCart } from "../HelperFunctions/cartUtil";
+import { useRouter } from 'expo-router';
+
 
 const Menu = () => {
   const { id, name } = useLocalSearchParams();
@@ -18,6 +20,8 @@ const Menu = () => {
   const [itemQuantities, setItemQuantities] = useState({});
 
   const restaurantImage = getRandomFoodImage(id);
+
+  const router = useRouter();
 
   useEffect(() => {
     navigation.setOptions({ headerShown: false });
@@ -129,11 +133,20 @@ const Menu = () => {
   };
 
   const handleCheckout = () => {  
-    if (!cart) return;
-    console.log("Checkout cart:", cart);
-    // Implement checkout logic here (e.g. navigate to checkout screen)
-    //TODO 
+    if (!cart || !cart.order_number) {
+      console.error("❌ Cart or order_number is undefined. Cannot proceed to checkout.");
+      return;
+    }
+  
+    console.log("✅ Navigating to checkout with orderNumber:", cart.order_number);
+  
+    router.push({
+      pathname: "checkout",
+      params: { orderNumber: cart.order_number }
+    });
   };
+  
+  
 
   const hasItemsInCart = Object.values(itemQuantities).some(quantity => quantity > 0);
 

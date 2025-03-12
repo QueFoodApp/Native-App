@@ -1,12 +1,18 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
 from app.api.database import get_db
 from app.api.auth import decode_access_token  # ✅ Import `decode_access_token`
 from app.api.models import CustomerHistory, OrderTable 
 from sqlalchemy import asc, desc
+from fastapi.responses import JSONResponse
+
 
 router = APIRouter()
 
+class OrderHistoryRequest(BaseModel):
+    order_number: str
+    
 # ✅ Debug All Request Headers
 @router.get("/debug/headers")
 async def debug_headers(request: Request):
@@ -77,11 +83,15 @@ def get_customer_orders(
 
     # ✅ Fetch full order details from `order_table` and sort by `due_date`
     orders = (
-        db.query(OrderTable)
-        .filter(OrderTable.order_number.in_(order_numbers))
-        .order_by(desc(OrderTable.due_date))  # Change to `asc(OrderTable.due_date)` for earliest first
-        .all()
+    db.query(OrderTable)
+    .filter(
+        OrderTable.order_number.in_(order_numbers),
+        OrderTable.status != "cart"
     )
+    .order_by(desc(OrderTable.due_date))  # Sort by latest due_date first
+    .all()
+        )
+
 
     if not orders:
         print("❌ No matching orders in order_table")
@@ -117,3 +127,45 @@ def get_customer_orders(
         "customer_number": customer_number,
         "orders": order_list  # ✅ Full order details, sorted by due_date
     }
+
+@router.post("/history")
+def add_order_to_customer_history(
+    request: OrderHistoryRequest,  # ✅ Accept order_number from JSON body
+    db: Session = Depends(get_db),
+    customer_number: str = Depends(get_phone_number_from_token)  # ✅ Extract customer number from token
+):
+    """
+    Insert a new record into `customer_history_table` when an order is placed.
+    """
+    print(f"📌 Adding order {request.order_number} to history for customer: {customer_number}")  # ✅ Debugging
+
+    # ✅ Ensure `customer_number` is treated as a string
+    customer_number = str(customer_number)
+
+    # ✅ Check if order exists in `order_table`
+    order = db.query(OrderTable).filter(OrderTable.order_number == request.order_number).first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    # ✅ Prevent duplicate entries
+    existing_history = db.query(CustomerHistory).filter(
+        CustomerHistory.customer_number == customer_number,
+        CustomerHistory.order_number == request.order_number
+    ).first()
+    
+    if existing_history:
+        print("⚠️ Order already exists in customer history, skipping insert.")
+        return {"message": "Order already exists in customer history"}
+
+    # ✅ Insert order into `customer_history_table`
+    new_history = CustomerHistory(
+        customer_number=customer_number,
+        order_number=request.order_number
+    )
+
+    db.add(new_history)
+    db.commit()
+    db.refresh(new_history)
+
+    print(f"✅ Successfully added order {request.order_number} to customer history!")
+    return {"message": "Order added to customer history", "order_number": request.order_number}

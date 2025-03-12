@@ -59,14 +59,14 @@ class ManagerAccount(Base):
 class CustomerHistory(Base):
     __tablename__ = "customer_history_table"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)  # ✅ Auto-increment ID
     customer_number = Column(String(15), ForeignKey("customer_account_table.phone_number"), nullable=False)
     order_number = Column(String, ForeignKey("order_table.order_number"), nullable=False)
 
-    # Relationship with Customer Account
+    # ✅ Relationship with Customer Account
     customer = relationship("CustomerAccount", back_populates="customer_history")
 
-    # Relationship with Order Table
+    # ✅ Relationship with Order Table
     order = relationship("OrderTable", back_populates="customer_histories")
 
 
