@@ -75,7 +75,7 @@ const Home = () => {
         </View>
       ) : restaurants.length === 0 ? (
         <View className="flex-1 justify-center items-center px-8">
-          <Ionicons name="paper-plane-outline" size={64} color="#aaa" style={{ marginBottom: 10 }} />
+          <Ionicons name="sad-outline" size={64} color="#aaa" style={{ marginBottom: 10 }} />
           <Text className="text-xl font-semibold mb-2">No restaurants nearby</Text>
           <Text className="text-center text-gray-500 mb-4">
             We couldn’t find any restaurants near your location.

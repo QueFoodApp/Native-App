@@ -1,10 +1,34 @@
 import React from "react";
-import { View, TextInput, TouchableOpacity } from "react-native";
+import { View, TextInput, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import * as Location from 'expo-location';
 
-const LocationTopBar = ({ form = { location: "" }, setForm, error, onProfilePress }) => {
+const LocationTopBar = ({ form = { location: "" }, setForm, error, onProfilePress}) => {
 
   const labelColor = error ? "#FF0000" : "#6b7280";
+
+  const handleLocationPress = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission denied', 'Please enable location permissions in settings to use this feature.');
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    try {
+      let result = await Location.reverseGeocodeAsync(location.coords);
+      console.log("Geocoding result:", result);
+      if (result && result.length > 0) {
+        const address = `${result[0].name}, ${result[0].city}, ${result[0].region}, ${result[0].country}`;
+        setForm({ ...form, location: address });
+      } else {
+        Alert.alert('Address not found', 'Could not determine address for current location.');
+      }
+    } catch (error) {
+      console.error("Geocoding error:", error);
+      Alert.alert('Geocoding Error', 'Failed to retrieve address from coordinates.');
+    }
+  };
 
   return (
     <View className="flex-row items-center justify-between px-4 py-3">
@@ -34,12 +58,14 @@ const LocationTopBar = ({ form = { location: "" }, setForm, error, onProfilePres
           }}
         />
 
-        <Ionicons
-          name="chevron-down-outline"
-          size={20}
-          color={labelColor}
-          style={{ marginLeft: 4 }}
-        />
+        <TouchableOpacity onPress={handleLocationPress}>
+          <Ionicons
+            name="navigate-outline"
+            size={20}
+            color={labelColor}
+            style={{ marginLeft: 4 }}
+          />
+        </TouchableOpacity>
       </View>
 
       <TouchableOpacity onPress={onProfilePress}>
