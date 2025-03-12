@@ -15,6 +15,8 @@ const HomeLayout = () => {
     activeTab = "home";
   } else if (pathname.includes("cart")) {
     activeTab = "cart";
+  } else if (pathname.includes("chat")) {
+    activeTab = "chat";
   }
 
   const handleHomePress = () => {
@@ -26,6 +28,9 @@ const HomeLayout = () => {
   const handleCartPress = () => {
     router.push("cart");
   }
+  const handleChatPress = () => {
+    router.push("chat");
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -35,8 +40,9 @@ const HomeLayout = () => {
           <Stack.Screen name="home" options={{ headerShown: false }} />
           <Stack.Screen name="order-history" options={{ headerShown: false }} />
           <Stack.Screen name="cart" options={{ headerShown: false }} />
+          <Stack.Screen name="chat" options={{ headerShown: false }} />
           <Stack.Screen name="profile" options={{ headerShown: false }} />
-          <Stack.Screen name="order-details" options={{ headerShown: true, title: 'Order Details' }} />
+          <Stack.Screen name="order-details" options={{ headerShown: false, title: 'Order Details' }} />
         </Stack>
       </View>
 
@@ -45,6 +51,7 @@ const HomeLayout = () => {
           onHomePress={handleHomePress}
           onOrderPress={handleOrderPress}
           onCartPress={handleCartPress}
+          onChatPress={handleChatPress}
           activeTab={activeTab}
         />
       )}

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const BottomBar = ({ onHomePress, onOrderPress, onCartPress, activeTab }) => {
+const BottomBar = ({ onHomePress, onOrderPress, onCartPress, onChatPress, activeTab }) => {
   const labelColor = '#6b7280';
 
   //black icon/text if this tab is active, else use gray
@@ -39,6 +39,12 @@ const BottomBar = ({ onHomePress, onOrderPress, onCartPress, activeTab }) => {
       <TouchableOpacity className="items-center" onPress={onCartPress}>
         <Ionicons name="cart-outline" size={24} color={getIconColor('cart')} />
         <Text style={getTextStyle('cart')}>Cart</Text>
+      </TouchableOpacity>
+
+      {/* AI Chat */}
+      <TouchableOpacity className="items-center" onPress={onChatPress}>
+        <Ionicons name="chatbubble-ellipses-outline" size={24} color={getIconColor('chat')} />
+        <Text style={getTextStyle('chat')}>Chat</Text>
       </TouchableOpacity>
     </View>
   );

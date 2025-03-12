@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, View, Text, TouchableOpacity, ScrollView, Image, StyleSheet, Alert, ActivityIndicator } from "react-native";
-import { useRouter, useLocalSearchParams } from "expo-router";
+import { useRouter, useLocalSearchParams, useNavigation } from "expo-router";
 import { useStripe } from "@stripe/stripe-react-native";
 import MapView, { Marker } from "react-native-maps";
 import { Ionicons } from "@expo/vector-icons";
@@ -8,6 +8,7 @@ import { getCartByOrderNumber } from "../HelperFunctions/cartUtil";
 import { getRandomFoodImage } from "../HelperFunctions/imageUtils";
 import API_BASE_URL from "../../config"; // ✅ Ensure correct API endpoint
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import BackButton from "../../components/BackButton";
 
 const Checkout = () => {
   const [cart, setCart] = useState(null);
@@ -16,6 +17,13 @@ const Checkout = () => {
   const router = useRouter();
   const { orderNumber } = useLocalSearchParams();
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
+
+  const navigation = useNavigation();
+
+
+  useEffect(() => {
+    navigation.setOptions({ headerShown: false });
+  }, [navigation]);
 
   useEffect(() => {
     fetchCartDetails();
@@ -182,6 +190,9 @@ const Checkout = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
+        <View className="absolute top-10 left-[-8] z-10">
+          <BackButton />
+        </View>
       <ScrollView>
         {/* ✅ Store Information */}
         <View className="relative">

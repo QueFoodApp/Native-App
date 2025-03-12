@@ -151,18 +151,7 @@ const OrderHistory = () => {
 
                 {/* Buttons */}
                 <View className="flex-row justify-between mt-4">
-                <TouchableOpacity
-                  className="bg-gray-200 flex-row items-center px-4 py-2 rounded-full"
-                  onPress={() => router.push({
-                    pathname: "/home/order-details",
-                    params: { order: JSON.stringify(item) }
-                  })}
-                >
-                  <Ionicons name="book" size={18} color="black" />
-                  <Text className="text-black font-medium ml-2">
-                    View Det
-                  </Text>
-                </TouchableOpacity>
+
 
                   <TouchableOpacity
                     className="bg-gray-200 flex-row items-center px-4 py-2 rounded-full"

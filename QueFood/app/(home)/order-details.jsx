@@ -3,6 +3,7 @@ import { SafeAreaView, View, Text, Image, StyleSheet, ScrollView } from "react-n
 import { Ionicons } from "@expo/vector-icons";
 import MapView, { Marker } from "react-native-maps";
 import { useLocalSearchParams } from "expo-router";
+import BackButton from "../../components/BackButton";
 
 const getStoreImage = (restaurant_id) => {
     const images = {
@@ -26,6 +27,9 @@ const OrderDetails = () => {
 
     return (
         <SafeAreaView className="flex-1 bg-white">
+            <View className="absolute top-10 left-[-8] z-10">
+                <BackButton />
+            </View>
             <ScrollView>
                 {/* ✅ Header Image */}
                 <View className="relative">
