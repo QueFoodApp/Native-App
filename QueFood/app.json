@@ -14,7 +14,14 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.QueFood"
+      "bundleIdentifier": "com.anonymous.QueFood",
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "config": {
+        "googleSignIn": {
+          "reservedClientId": "com.googleusercontent.apps.223931378619-aof6318jf563gokm2qutshb3m4pkitc6"
+        },
+        "usesAppleSignIn": true
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -25,6 +32,9 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "GOOGLE_CLIENT_ID": "223931378619-aof6318jf563gokm2qutshb3m4pkitc6.apps.googleusercontent.com"
     },
     "plugins": [
       "expo-router"
