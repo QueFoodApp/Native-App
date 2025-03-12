@@ -11,12 +11,20 @@ import { useRouter } from "expo-router";
 const Home = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [form, setForm] = useState({ location: "" });
+  const [error, setError] = useState(false);
 
   // Fetch restaurants when the component loads
   useEffect(() => {
     const loadRestaurants = async () => {
+      if (!form.location) {
+        setRestaurants([]);
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
-      let data = await fetchNearbyRestaurants();
+      let data = await fetchNearbyRestaurants(form.location);
 
       // Assign a unique image to each restaurant using its ID
       data = data.map((restaurant) => ({
@@ -29,7 +37,7 @@ const Home = () => {
     };
 
     loadRestaurants();
-  }, []);
+  }, [form.location]);
 
   const getRandomRestaurants = (restaurants) => {
     if (restaurants.length <= 4) return restaurants; // If 4 or fewer, use all
@@ -39,7 +47,12 @@ const Home = () => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* Pass navigation function to profile button */}
-      <LocationTopBar onProfilePress={() => router.push('/profile')} />
+      <LocationTopBar 
+        form={form}
+        setForm={setForm}
+        error={error}
+        onProfilePress={() => router.push('/profile')} 
+      />
 
       {/* 🔥 Banner Section */}
       <View className="h-48 bg-black mx-4 rounded-lg overflow-hidden justify-center items-center mb-4">

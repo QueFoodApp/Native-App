@@ -1,8 +1,8 @@
 import API_BASE_URL from '../../config'; 
 import { getUserLocation } from './location';
 
-export const fetchNearbyRestaurants = async () => {
-  const location = await getUserLocation();
+export const fetchNearbyRestaurants = async (address) => {
+  const location = await getUserLocation(address);
   if (!location) {
     console.error("Failed to get user location.");
     return [];
@@ -23,6 +23,7 @@ export const fetchNearbyRestaurants = async () => {
     return [];
   }
 };
+
 export const fetchMenuByRestaurantId = async (restaurantId) => {
   try {
     const response = await fetch(`${API_BASE_URL}/api/menu/${restaurantId}`);

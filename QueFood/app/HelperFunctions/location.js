@@ -1,11 +1,20 @@
 import * as Location from 'expo-location';
 
-export const getUserLocation = async () => {
-  console.warn("⚠️ Using fake New York City location for testing.");
-  // return { latitude: 33.5, longitude: -86.7 }; // NYC GPS coordinates
-  // return { latitude: 47.6689212, longitude: -122.3839731 }; // Seattle GPS coordinates
-  return { latitude: 42.8522855, longitude: -106.2717718 }; // Restaurant ID = 87, radius = 300 km 
-  
+export const getUserLocation = async (address) => {
+  try {
+    const geocode = await Location.geocodeAsync(address);
+    if (geocode.length > 0) {
+      const { latitude, longitude } = geocode[0];
+      console.log("Address in:", address);
+      console.log("Location found:", latitude, longitude);
+      return { latitude, longitude };
+    } else {
+      throw new Error('No location found for the provided address.');
+    }
+  } catch (error) {
+    console.error("Error getting location:", error);
+    throw error;
+  }
 };
 
 const locationUtil = {
