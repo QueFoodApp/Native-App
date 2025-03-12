@@ -1,9 +1,12 @@
-import React from "react";
-import { View, TextInput, TouchableOpacity, Alert } from "react-native";
+import React, { useState, useCallback } from "react";
+import { View, TextInput, TouchableOpacity, Alert, FlatList, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Location from 'expo-location';
+import debounce from 'lodash/debounce';
 
 const LocationTopBar = ({ form = { location: "" }, setForm, error, onProfilePress}) => {
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const labelColor = error ? "#FF0000" : "#6b7280";
 
@@ -30,6 +33,35 @@ const LocationTopBar = ({ form = { location: "" }, setForm, error, onProfilePres
     }
   };
 
+  const fetchSuggestions = async (query) => {
+    if (query.length < 2) {
+      setShowSuggestions(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=json&addressdetails=1&limit=5`);
+      const data = await response.json();
+      console.log("Suggestions:", data);
+      setSuggestions(data);
+      setShowSuggestions(true);
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+    }
+  };
+
+  const debouncedFetchSuggestions = useCallback(debounce(fetchSuggestions, 300), []); //300ms debounce
+
+  const handleInputChange = (val) => {
+    setForm({ ...form, location: val });
+    debouncedFetchSuggestions(val);
+  };
+
+  const handleSuggestionPress = (address) => {
+    setForm({ ...form, location: address.display_name });
+    setShowSuggestions(false);
+  };
+
   return (
     <View className="flex-row items-center justify-between px-4 py-3">
 
@@ -43,10 +75,9 @@ const LocationTopBar = ({ form = { location: "" }, setForm, error, onProfilePres
 
         <Ionicons name="location-outline" size={20} color={labelColor} />
 
-
         <TextInput
           value={form.location}
-          onChangeText={(val) => setForm({ ...form, location: val })}
+          onChangeText={handleInputChange}
           placeholder="Enter Location"
           placeholderTextColor={labelColor}
           style={{
@@ -71,6 +102,35 @@ const LocationTopBar = ({ form = { location: "" }, setForm, error, onProfilePres
       <TouchableOpacity onPress={onProfilePress}>
         <Ionicons name="person-circle-outline" size={36} color="#000" />
       </TouchableOpacity>
+
+      {showSuggestions && (
+        <FlatList
+          data={suggestions}
+          keyExtractor={(item) => item.place_id.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => handleSuggestionPress(item)} style={{ flexDirection: 'row', alignItems: 'center', padding: 10, backgroundColor: '#fff', borderBottomWidth: 1, borderColor: '#ccc' }}>
+              <Ionicons name="pin-outline" size={20} color="#000" style={{ marginRight: 8 }} />
+              <Text>
+                {item.display_name}
+              </Text>
+            </TouchableOpacity>
+          )}
+          style={{
+            position: 'absolute',
+            top: 50,
+            left: 10,
+            right: 10,
+            backgroundColor: '#fff',
+            borderRadius: 5,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.8,
+            shadowRadius: 2,
+            elevation: 5,
+            zIndex: 1000, // Ensure the suggestions list is on top
+          }}
+        />
+      )}
     </View>
   );
 };
