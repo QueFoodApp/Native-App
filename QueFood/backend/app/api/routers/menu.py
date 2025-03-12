@@ -12,6 +12,8 @@ load_dotenv()
 router = APIRouter()
 logging.basicConfig(level=logging.DEBUG)  # ✅ Enable Debug Logging
 
+API_BASE_URL = os.getenv("API_BASE_URL")
+
 @router.get("/{restaurant_id}", response_model=List[dict])
 def get_menu(
     restaurant_id: int,
@@ -46,7 +48,6 @@ def get_menu(
         result = db.execute(menu_sql, params)
         menu_items = result.fetchall()
 
-
         if not menu_items:
             return []  # If no menu items exist, return an empty array
 
@@ -59,7 +60,6 @@ def get_menu(
         photo_result = db.execute(photo_sql, {"restaurant_id": restaurant_id})
         photos = photo_result.fetchall()
 
-
         # ✅ Organize Photos by Food Name
         photo_dict = {}
         for photo in photos:
@@ -67,7 +67,7 @@ def get_menu(
                 trimmed_food_name = photo.food_name.strip()  # 🔥 Ensure trimming
                 if trimmed_food_name not in photo_dict:
                     photo_dict[trimmed_food_name] = []
-                photo_dict[trimmed_food_name].append(f"http://localhost:8000/api/photos/{photo.file_name}")
+                photo_dict[trimmed_food_name].append(f"{API_BASE_URL}/api/photos/{photo.file_name}")
 
         # ✅ Construct Response
         response = []
@@ -75,7 +75,6 @@ def get_menu(
             trimmed_menu_name = menu.food_name.strip()  # 🔥 Trim before lookup
             image_urls = photo_dict.get(trimmed_menu_name, [None])  # Default to None if no images
             for image_url in image_urls:
-                #print(image_url)
                 response.append({
                     "menu_id": menu.menu_id,
                     "food_name": menu.food_name,
