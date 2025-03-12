@@ -4,7 +4,7 @@ import { getUserLocation } from './location';
 export const fetchNearbyRestaurants = async (address) => {
   const location = await getUserLocation(address);
   if (!location) {
-    console.error("Failed to get user location.");
+    console.log("Failed to get user location.");
     return [];
   }
 

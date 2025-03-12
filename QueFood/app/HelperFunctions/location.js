@@ -7,7 +7,8 @@ export const getUserLocation = async (address) => {
       const { latitude, longitude } = geocode[0];
       return { latitude, longitude };
     } else {
-      throw new Error('No location found for the provided address.');
+      console.log('No location found for the provided address.');
+      return null;
     }
   } catch (error) {
     console.error("Error getting location:", error);

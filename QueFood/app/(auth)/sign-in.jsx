@@ -54,10 +54,10 @@ const SignIn = () => {
 
       const data = await response.json();
       await AsyncStorage.setItem("token", data.access_token);
-      Alert.alert("✅ Success", "Sign in successful!");
+      Alert.alert("Success", "Sign in successful!");
       router.push("/home");
     } catch (error) {
-      Alert.alert("❌ Error", error.message);
+      Alert.alert("Error", error.message);
     }
   };
 

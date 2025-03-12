@@ -42,7 +42,6 @@ const LocationTopBar = ({ form = { location: "" }, setForm, error, onProfilePres
     try {
       const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=json&addressdetails=1&limit=5`);
       const data = await response.json();
-      console.log("Suggestions:", data);
       setSuggestions(data);
       setShowSuggestions(true);
     } catch (error) {
