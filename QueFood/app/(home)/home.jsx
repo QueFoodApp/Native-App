@@ -1,18 +1,28 @@
-import React, { useState, useEffect } from "react";
-import { SafeAreaView, View, Text, ActivityIndicator, FlatList, Image, TouchableOpacity } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { 
+  SafeAreaView, View, Text, ActivityIndicator, FlatList, 
+  Image, TouchableOpacity, Dimensions 
+} from "react-native";
 import { fetchNearbyRestaurants } from "../HelperFunctions/api";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router"; // Import router for navigation
-import BottomBar from "../../components/BottomBar";
-import LocationTopBar from "../../components/TopBar"; // Ensure correct import
+import { useRouter } from "expo-router";
+import LocationTopBar from "../../components/TopBar"; 
 import { getRandomFoodImage } from "../HelperFunctions/imageUtils";
-import { useRouter } from "expo-router"; 
+
+const { width } = Dimensions.get("window"); // ✅ Get device screen width
 
 const Home = () => {
   const [restaurants, setRestaurants] = useState([]);
+  const [bannerRestaurants, setBannerRestaurants] = useState([]); // ✅ Store the random restaurants once
   const [loading, setLoading] = useState(true);
+<<<<<<< Updated upstream
   const [form, setForm] = useState({ location: "" });
   const [error, setError] = useState(false);
+=======
+  const [activeIndex, setActiveIndex] = useState(0);
+  const flatListRef = useRef(null);
+  const router = useRouter();
+>>>>>>> Stashed changes
 
   // Fetch restaurants when the component loads
   useEffect(() => {
@@ -29,23 +39,41 @@ const Home = () => {
       // Assign a unique image to each restaurant using its ID
       data = data.map((restaurant) => ({
         ...restaurant,
-        image: getRandomFoodImage(restaurant.restaurant_id), // Uses restaurant ID for uniqueness
+        image: getRandomFoodImage(restaurant.restaurant_id), 
       }));
 
       setRestaurants(data);
+
+      // ✅ Pick 4 random restaurants ONCE and store them
+      if (data.length > 0) {
+        const shuffled = [...data].sort(() => 0.5 - Math.random());
+        setBannerRestaurants(shuffled.slice(0, 4));
+      }
+
       setLoading(false);
     };
 
     loadRestaurants();
   }, [form.location]);
 
-  const getRandomRestaurants = (restaurants) => {
-    if (restaurants.length <= 4) return restaurants; // If 4 or fewer, use all
-    return restaurants.sort(() => 0.5 - Math.random()).slice(0, 4); // Shuffle and pick 4
-  };
+  // Auto-scroll logic (loops back to the first item after the last one)
+  useEffect(() => {
+    if (bannerRestaurants.length > 1) {
+      const interval = setInterval(() => {
+        setActiveIndex((prevIndex) => {
+          const nextIndex = (prevIndex + 1) % bannerRestaurants.length;
+          flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
+          return nextIndex;
+        });
+      }, 5000); // Auto-scroll every 5 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [bannerRestaurants]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
+<<<<<<< Updated upstream
       {/* Pass navigation function to profile button */}
       <LocationTopBar 
         form={form}
@@ -53,21 +81,57 @@ const Home = () => {
         error={error}
         onProfilePress={() => router.push('/profile')} 
       />
+=======
+      {/* Top Navigation Bar */}
+      <LocationTopBar onProfilePress={() => router.push('/profile')} />
+>>>>>>> Stashed changes
 
-      {/* 🔥 Banner Section */}
-      <View className="h-48 bg-black mx-4 rounded-lg overflow-hidden justify-center items-center mb-4">
-        {/* Background Image */}
-        <Image 
-          source={{ uri: "https://source.unsplash.com/600x300/?coffee" }} 
-          className="absolute w-full h-full opacity-40"
+      {/* 🔥 Banner Section - Full Width, Auto-scroll with Circular Loop */}
+      <View className="h-48 mb-4">
+        <FlatList
+          ref={flatListRef}
+          data={bannerRestaurants}  // ✅ Now using a stable state
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item) => item.restaurant_id.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() =>
+                router.push({ pathname: "/menu", params: { id: item.restaurant_id, name: item.restaurant_name } })
+              }
+              style={{ width }} // ✅ Ensure each item fills the screen width
+              className="h-48 bg-black justify-center items-center"
+            >
+              <Image source={{ uri: item.image }} className="absolute w-full h-full opacity-40" />
+              <Text className="text-white text-xl font-semibold">{item.restaurant_name}</Text>
+              <Text className="text-white text-sm mb-2">{item.address.street_address}, {item.address.city}</Text>
+              <TouchableOpacity 
+                onPress={() => router.push({ pathname: "/menu", params: { id: item.restaurant_id, name: item.restaurant_name } })}
+                className="bg-white px-5 py-2 rounded-full mt-2"
+              >
+                <Text className="text-black font-bold">View Menu</Text>
+              </TouchableOpacity>
+            </TouchableOpacity>
+          )}
+          onMomentumScrollEnd={(event) => {
+            const index = Math.round(event.nativeEvent.contentOffset.x / width);
+            setActiveIndex(index);
+          }}
         />
-        <Text className="text-white text-xl font-semibold">Relax with a cup of coffee</Text>
-        <Text className="text-white text-sm mb-2">Buy one, get one free</Text>
-        <TouchableOpacity className="bg-white px-5 py-2 rounded-full mt-2">
-          <Text className="text-black font-bold">View Restaurants</Text>
-        </TouchableOpacity>
+        
+        {/* Pagination Dots */}
+        <View className="flex-row justify-center mt-2">
+          {bannerRestaurants.map((_, index) => (
+            <View
+              key={index}
+              className={`h-2 w-2 mx-1 rounded-full ${index === activeIndex ? 'bg-black' : 'bg-gray-400'}`}
+            />
+          ))}
+        </View>
       </View>
 
+      {/* Loading Indicator */}
       {loading ? (
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="#000" />
@@ -83,39 +147,27 @@ const Home = () => {
         </View>
       ) : (
         <FlatList
-            data={restaurants}
-            keyExtractor={(item) => item.restaurant_id.toString()}
-            renderItem={({ item }) => (
-                <TouchableOpacity 
-                onPress={() => router.push({ pathname: "/menu", params: { id: item.restaurant_id, name: item.restaurant_name } })}
-                className="bg-white mx-4 mb-4 rounded-lg overflow-hidden shadow-lg"
-                >
-                {/* 🖼️ Restaurant Image */}
-                <Image 
-                    source={{ uri: item.image }} 
-                    className="w-full h-48 bg-gray-200"
-                />
-
-                {/* 📋 Restaurant Info */}
-                <View className="p-4">
-                    <Text className="text-lg font-bold">{item.restaurant_name}</Text>
-                    <Text className="text-gray-500">{item.address.street_address}, {item.address.city}</Text>
-
-                    {/* ⭐ Rating | 💰 Price */}
-                    <View className="flex-row items-center mt-2">
-                    <Text className="text-gray-500">⭐ {item.ratings}</Text>
-                    <Text className="text-gray-500 ml-2">💰 {item.pricing_levels}</Text>
-                    </View>
-
-                    {/* 📏 Distance */}
-                    <Text className="text-gray-400 mt-1">{item.distance_km} km away</Text>
+          data={restaurants}  // ✅ This now remains stable and doesn't change when scrolling the banner
+          keyExtractor={(item) => item.restaurant_id.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity 
+              onPress={() => router.push({ pathname: "/menu", params: { id: item.restaurant_id, name: item.restaurant_name } })}
+              className="bg-white mx-4 mb-4 rounded-lg overflow-hidden shadow-lg"
+            >
+              <Image source={{ uri: item.image }} className="w-full h-48 bg-gray-200" />
+              <View className="p-4">
+                <Text className="text-lg font-bold">{item.restaurant_name}</Text>
+                <Text className="text-gray-500">{item.address.street_address}, {item.address.city}</Text>
+                <View className="flex-row items-center mt-2">
+                  <Text className="text-gray-500">⭐ {item.ratings}</Text>
+                  <Text className="text-gray-500 ml-2">💰 {item.pricing_levels}</Text>
                 </View>
-                </TouchableOpacity>
-            )}
-            />
+                <Text className="text-gray-400 mt-1">{item.distance_km} km away</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        />
       )}
-
-      {/* Bottom Navigation Bar */}
     </SafeAreaView>
   );
 };

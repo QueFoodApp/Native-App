@@ -91,6 +91,7 @@ const OrderHistory = () => {
   const getStoreImage = (restaurant_id) => {
     const images = {
       1: require("../../assets/images/Smoothies.png"),
+      81: require("../../assets/images/RedLobster.png"),
       87: require("../../assets/images/Burger.png"),
     };
     return images[restaurant_id];
