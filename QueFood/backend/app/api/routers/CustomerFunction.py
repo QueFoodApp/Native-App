@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from app.api.database import get_db
 from app.api.auth import decode_access_token  # ✅ Import `decode_access_token`
-from app.api.models import CustomerHistory, OrderTable 
+from app.api.models import CustomerHistory, OrderTable , CustomerAccount
 from sqlalchemy import asc, desc
 from fastapi.responses import JSONResponse
 
@@ -169,3 +169,36 @@ def add_order_to_customer_history(
 
     print(f"✅ Successfully added order {request.order_number} to customer history!")
     return {"message": "Order added to customer history", "order_number": request.order_number}
+
+@router.get("/decode-token")
+def decode_token(request: Request, db: Session = Depends(get_db)):
+    """
+    Extracts the phone number from the JWT token and verifies if it exists in the database.
+    """
+    token = request.headers.get("Authorization")
+    
+    if not token:
+        raise HTTPException(status_code=401, detail="Missing Authorization Header")
+    
+    if not token.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid Authorization Format")
+    
+    token = token.split(" ")[1]  # ✅ Extract token from "Bearer <TOKEN>"
+
+    try:
+        decoded_data = decode_access_token(token)  # ✅ Decode JWT Token
+        phone_number = decoded_data.get("sub")  # Extract phone number from token
+
+        if not phone_number:
+            raise HTTPException(status_code=400, detail="Invalid token data")
+
+        # ✅ Verify if phone number exists in the database
+        user = db.query(CustomerAccount).filter(CustomerAccount.phone_number == phone_number).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        return {"phone_number": phone_number}
+    
+    except Exception as e:
+        print(f"❌ Token decoding error: {str(e)}")  # ✅ Debugging error
+        raise HTTPException(status_code=401, detail="Invalid token")

@@ -41,6 +41,7 @@ async def create_payment_intent(payment_request: PaymentRequest):
             currency="usd",
             automatic_payment_methods={"enabled": True},
         )
+        print("here")
         return {"client_secret": intent.client_secret}
     except Exception as e:
         return {"error": str(e)}

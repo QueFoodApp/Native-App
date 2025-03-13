@@ -199,3 +199,4 @@ def change_password(request: ChangePasswordRequest, db: Session = Depends(get_db
     db.commit()
 
     return {"message": "Password changed successfully"}
+
