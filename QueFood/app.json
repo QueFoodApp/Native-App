@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "QueFood",
-    "scheme": "QueFood",
-    "slug": "QueFood",
+    "name": "QueFoodHall",
+    "scheme": "QueFoodHall",
+    "slug": "QueFoodHall",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
