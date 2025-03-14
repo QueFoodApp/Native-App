@@ -15,14 +15,11 @@ const Home = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [bannerRestaurants, setBannerRestaurants] = useState([]); // ✅ Store the random restaurants once
   const [loading, setLoading] = useState(true);
-<<<<<<< Updated upstream
   const [form, setForm] = useState({ location: "" });
   const [error, setError] = useState(false);
-=======
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef(null);
   const router = useRouter();
->>>>>>> Stashed changes
 
   // Fetch restaurants when the component loads
   useEffect(() => {
@@ -73,18 +70,13 @@ const Home = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-<<<<<<< Updated upstream
-      {/* Pass navigation function to profile button */}
+      {/* Top Navigation Bar */}
       <LocationTopBar 
         form={form}
         setForm={setForm}
         error={error}
         onProfilePress={() => router.push('/profile')} 
       />
-=======
-      {/* Top Navigation Bar */}
-      <LocationTopBar onProfilePress={() => router.push('/profile')} />
->>>>>>> Stashed changes
 
       {/* 🔥 Banner Section - Full Width, Auto-scroll with Circular Loop */}
       <View className="h-48 mb-4">
