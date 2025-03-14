@@ -59,18 +59,11 @@ const SocialLogin = ({ onFacebookPress }) => {
 
       const backendData = await backendResponse.json();
 
-      // ✅ Handle case where phone number is required
-      if (backendData.require_phone_number) {
-        Alert.alert("📌 Phone number required", "Redirecting to Link Phone...");
-        router.push(`/link-phone?email=${userInfo.email}`);
-        return;
-      }
-
       // ✅ Store JWT Token (From Backend)
       await AsyncStorage.setItem("token", backendData.access_token);
 
-      // ✅ Ensure Navigation Happens
-      router.push("/home");
+      // ✅ Redirect to phone number input
+      router.push("/phone-input");
     } catch (error) {
       Alert.alert("❌ Google Sign-In Error", error.message);
     }
@@ -113,18 +106,11 @@ const SocialLogin = ({ onFacebookPress }) => {
 
       const backendData = await backendResponse.json();
 
-      // ✅ Handle case where phone number is required
-      if (backendData.require_phone_number) {
-        Alert.alert("📌 Phone number required", "Redirecting to Link Phone...");
-        router.push(`/link-phone?email=${appleUserInfo.email}`);
-        return;
-      }
-
       // ✅ Store JWT Token (From Backend)
       await AsyncStorage.setItem("token", backendData.access_token);
 
-      // ✅ Ensure Navigation Happens
-      router.push("/home");
+      // ✅ Redirect to phone number input
+      router.push("/phone-input");
     } catch (error) {
       if (error.code === "ERR_CANCELED") {
         Alert.alert("❌ Apple Sign-In Cancelled");

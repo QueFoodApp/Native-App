@@ -12,6 +12,7 @@ const AuthLayout = () => {
             <Stack.Screen name='reset-password' options={{ headerShown: false }} />
             <Stack.Screen name='change-password' options={{ headerShown: false }} />
             <Stack.Screen name='profile-information' options={{ headerShown: false }} />
+            <Stack.Screen name='phone-input' options={{ headerShown: false }} />
         </Stack>
 
         <StatusBar style="dark" />
