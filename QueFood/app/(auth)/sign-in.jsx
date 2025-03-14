@@ -54,6 +54,7 @@ const SignIn = () => {
 
       const data = await response.json();
       await AsyncStorage.setItem("token", data.access_token);
+      await AsyncStorage.setItem("userPhoneNumber", formattedPhoneNumber);
       Alert.alert("Success", "Sign in successful!");
       router.push("/home");
     } catch (error) {
