@@ -26,16 +26,28 @@ def send_otp_endpoint(phone_verification: PhoneVerificationRequest, db: Session 
     send_otp(phone_verification.phone_number, otp)
 
     new_user = CustomerAccount(
-        customer_id=phone_verification.phone_number,
         phone_number=phone_verification.phone_number,
         otp=otp,
         verified=False,
-        manager_account_name=None,  # ✅ No default name
-        manager_account_password=None,  # ✅ No default password
+        manager_account_name="NA",  # ✅ No default name
+        manager_account_password="NA",  # ✅ No default password
     )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+
+    return {"message": "OTP sent successfully"}
+
+@router.post("/resend-otp", response_model=PhoneVerificationResponse)
+def resend_otp(phone_verification: PhoneVerificationRequest, db: Session = Depends(get_db)):
+    user = db.query(CustomerAccount).filter(CustomerAccount.phone_number == phone_verification.phone_number).first()
+    if not user:
+        raise HTTPException(status_code=400, detail="Phone number not registered")
+    otp = generate_otp()
+    send_otp(phone_verification.phone_number, otp)
+
+    user.otp = otp
+    db.commit()
 
     return {"message": "OTP sent successfully"}
 
