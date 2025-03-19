@@ -14,16 +14,16 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import API_BASE_URL from '../../config'; 
 
-// ✅ API endpoint
+// API endpoint
 const API_URL = `${API_BASE_URL}/api/customer/orders`;
 
-// ✅ Fetch order history function
+// Fetch order history function
 const fetchOrderHistory = async (setOrders, setLoading) => {
   setLoading(true);
   try {
     const token = await AsyncStorage.getItem("token");
     if (!token) {
-      console.error("❌ No token found in AsyncStorage.");
+      console.error("No token found in AsyncStorage.");
       setOrders([]);
       return;
     }
@@ -58,13 +58,13 @@ const OrderHistory = () => {
     fetchOrderHistory(setOrders, setLoading);
   }, []);
 
-  // ✅ Handle Reorder
+  // Handle Reorder
   const handleReorder = (order) => {
     console.log("Reordering:", order.order_number);
     Alert.alert("Reorder", "This feature will be implemented soon!");
   };
 
-  // ✅ Navigate to Order Details
+  // Navigate to Order Details
   const handleViewDetails = (order) => {
     router.push({
       pathname: "/(home)/order-details",
@@ -72,7 +72,7 @@ const OrderHistory = () => {
     });
   };
 
-  // ✅ Status Color Logic
+  // Status Color Logic
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
       case "preparing":
@@ -87,7 +87,7 @@ const OrderHistory = () => {
     }
   };
 
-  // ✅ Fetch Store Images
+  // Fetch Store Images
   const getStoreImage = (restaurant_id) => {
     const images = {
       1: require("../../assets/images/Smoothies.png"),

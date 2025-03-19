@@ -31,7 +31,7 @@ const OrderDetails = () => {
                 <BackButton />
             </View>
             <ScrollView>
-                {/* ✅ Header Image */}
+                {/* Header Image */}
                 <View className="relative">
                     <Image
                         source={getStoreImage(order.restaurant_id)}
@@ -39,7 +39,7 @@ const OrderDetails = () => {
                     />
                 </View>
 
-                {/* ✅ Order Details */}
+                {/* Order Details */}
                 <View className="p-4">
                     <Text className="text-2xl font-bold">{order.restaurant_name}</Text>
                     <Text className="text-gray-500">{order.street_address || "No address provided"}</Text>
@@ -83,7 +83,7 @@ const OrderDetails = () => {
                         </MapView>
                     </View>
 
-                    {/* ✅ Order Items */}
+                    {/* Order Items */}
                     <Text className="text-xl font-semibold mt-5">Your Items</Text>
                     {order.fooditems.map((item, index) => (
                         <View key={index} className="flex-row justify-between items-center mt-2">
@@ -96,7 +96,7 @@ const OrderDetails = () => {
                         </View>
                     ))}
 
-                    {/* ✅ Order Pricing Summary */}
+                    {/* Order Pricing Summary */}
                     <View className="mt-5 border-t border-gray-300 pt-3">
                         <View className="flex-row justify-between">
                             <Text className="text-gray-700">Subtotal</Text>
@@ -116,7 +116,7 @@ const OrderDetails = () => {
                         </View>
                     </View>
 
-                    {/* ✅ Payment Method */}
+                    {/* Payment Method */}
                     <View className="mt-5">
                         <Text className="text-xl font-semibold">Payment</Text>
                         <View className="flex-row items-center mt-2">
@@ -125,7 +125,7 @@ const OrderDetails = () => {
                         </View>
                     </View>
 
-                    {/* ✅ Order Time */}
+                    {/* Order Time */}
                     <View className="mt-5">
                         <Text className="text-xl font-semibold">Order due date</Text>
                         <Text className="text-gray-700 mt-1">
