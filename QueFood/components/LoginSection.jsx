@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Assuming you're using Expo for icons
+import { Ionicons } from '@expo/vector-icons';
 
 const LoginSection = ({ title, onLoginPress }) => {
   return (

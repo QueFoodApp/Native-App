@@ -118,7 +118,7 @@ export const getRestaurantDetails = async (restaurantId) => {
       const data = await response.json();
       return data;
   } catch (error) {
-      console.error("❌ Error fetching restaurant details:", error);
+      console.error("Error fetching restaurant details:", error);
       return null;
   }
 };

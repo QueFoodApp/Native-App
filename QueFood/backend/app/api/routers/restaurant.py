@@ -9,7 +9,7 @@ router = APIRouter()
 
 # Haversine formula to calculate distance between two points
 def haversine(lat1, lon1, lat2, lon2):
-    R = 6371  # Radius of Earth in km
+    R = 6371
     dlat = radians(lat2 - lat1)
     dlon = radians(lon2 - lon1)
     a = sin(dlat/2)**2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon/2)**2
@@ -28,8 +28,8 @@ def get_nearby_restaurants(latitude: float, longitude: float, radius: float, db:
 
         nearby_restaurants = []
         for restaurant, address in results:
-            if address.latitude and address.longitude:  # ✅ Fix Here
-                distance = haversine(latitude, longitude, address.latitude, address.longitude)  # ✅ Fix Here
+            if address.latitude and address.longitude:  # Fix Here
+                distance = haversine(latitude, longitude, address.latitude, address.longitude)  # Fix Here
                 if distance < radius:
                     nearby_restaurants.append({
                         "restaurant_id": restaurant.restaurant_id,
@@ -43,7 +43,7 @@ def get_nearby_restaurants(latitude: float, longitude: float, radius: float, db:
                             "street_address": address.street_address,
                             "postal_code": address.postal_code,
                             "latitude": address.latitude,
-                            "longitude": address.longitude  # ✅ Fix Here
+                            "longitude": address.longitude  # Fix Here
                         },
                         "distance_km": round(distance, 2)
                     })

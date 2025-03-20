@@ -27,7 +27,7 @@ class CustomerAccount(Base):
     __tablename__ = "customer_account_table"
 
     customer_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    phone_number = Column(String(15), unique=True, nullable=False)  # ✅ Matches with `customer_history_table`
+    phone_number = Column(String(15), unique=True, nullable=False) 
     manager_account_name = Column(String(255), nullable=False)
     manager_account_password = Column(String(255), nullable=False)
     address = Column(String(255), nullable=True)
@@ -59,14 +59,14 @@ class ManagerAccount(Base):
 class CustomerHistory(Base):
     __tablename__ = "customer_history_table"
 
-    id = Column(Integer, primary_key=True, autoincrement=True, index=True)  # ✅ Auto-increment ID
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True) 
     customer_number = Column(String(15), ForeignKey("customer_account_table.phone_number"), nullable=False)
     order_number = Column(String, ForeignKey("order_table.order_number"), nullable=False)
 
-    # ✅ Relationship with Customer Account
+    # Relationship with Customer Account
     customer = relationship("CustomerAccount", back_populates="customer_history")
 
-    # ✅ Relationship with Order Table
+    # Relationship with Order Table
     order = relationship("OrderTable", back_populates="customer_histories")
 
 
@@ -101,7 +101,7 @@ class OrderTable(Base):
     taxes = Column(Float, nullable=False, default=0.0)
     fooditems = Column(MutableList.as_mutable(JSON), nullable=False) 
 
-    # ✅ New Address Columns
+    # New Address Columns
     state = Column(String(255), nullable=True)
     city = Column(String(255), nullable=True)
     street_address = Column(String(255), nullable=True)
@@ -133,7 +133,7 @@ class Restaurant(Base):
     managers = relationship("ManagerAccount", back_populates="restaurant")
     orders = relationship("OrderTable", back_populates="restaurant")
     address = relationship("Address", back_populates="restaurant", uselist=False)
-    photos = relationship("RestaurantPhotos", back_populates="restaurant")  # ✅ Added
+    photos = relationship("RestaurantPhotos", back_populates="restaurant")  # Added
     
 
 class RestaurantPhotos(Base):
@@ -141,11 +141,11 @@ class RestaurantPhotos(Base):
 
     photo_id = Column(Integer, primary_key=True, index=True)
     restaurant_id = Column(Integer, ForeignKey("restaurant_table.restaurant_id"), nullable=False)
-    food_name = Column(String(500), nullable=True)  # Matches menu food_name
-    file_name = Column(String, nullable=False)  # The name of the image file
-    content_type = Column(String, nullable=False)  # e.g., image/jpeg
-    photo_data = Column(LargeBinary, nullable=False)  # The actual image binary data
-    upload_time = Column(DateTime, default=datetime.utcnow)  # Timestamp of upload
+    food_name = Column(String(500), nullable=True) 
+    file_name = Column(String, nullable=False) 
+    content_type = Column(String, nullable=False) 
+    photo_data = Column(LargeBinary, nullable=False) 
+    upload_time = Column(DateTime, default=datetime.utcnow) 
 
     # Relationship with Restaurant
     restaurant = relationship("Restaurant", back_populates="photos")

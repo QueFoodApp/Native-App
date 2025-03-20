@@ -72,13 +72,6 @@ const Contact = () => {
             </TouchableOpacity>
 
             {/* Customer Service via Email */}
-            {/* <TouchableOpacity className="flex-row items-center px-5 py-4" onPress={() => router.push('/email-support')}>
-              <Ionicons name="mail-outline" size={22} color="black" className="mr-4" />
-              <Text className="flex-1 text-lg text-black">Customer Service via Email</Text>
-              <Ionicons name="chevron-forward-outline" size={20} color="black" />
-            </TouchableOpacity> */}
-
-            {/* Customer Service via Email */}
             <TouchableOpacity 
             className="flex-row items-center px-5 py-4" 
             onPress={handleEmailSupport}

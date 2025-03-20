@@ -44,7 +44,7 @@ const ChangePassword = () => {
 
       const data = await response.json();
       Alert.alert('Success', data.message);
-      router.push('/sign-in'); // Navigate to the sign-in screen after successful password change
+      router.push('/sign-in');
     } catch (error) {
       Alert.alert('Error', error.message);
     }

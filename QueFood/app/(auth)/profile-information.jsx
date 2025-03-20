@@ -2,7 +2,7 @@ import { SafeAreaView, View, Text, TextInput, TouchableOpacity, Alert } from 're
 import React, { useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import LoginSection from '../../components/LoginSection';
-import EyeIcon from '../../assets/images/eye.svg'; // Ensure the path is correct
+import EyeIcon from '../../assets/images/eye.svg';
 import BackButton from '../../components/BackButton';
 import API_BASE_URL from '../../config'; 
 
@@ -13,7 +13,7 @@ const ProfileInformation = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { phone_number } = useLocalSearchParams(); // Retrieve `phone_number` from the query parameters
+  const { phone_number } = useLocalSearchParams();
 
   const handleSignUp = async () => {
     if (password !== confirmPassword) {

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from sqlalchemy.sql import text  # ✅ Import text()
+from sqlalchemy.sql import text 
 from app.api.database import get_db
 from typing import List, Optional
 import logging
@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 router = APIRouter()
-logging.basicConfig(level=logging.DEBUG)  # ✅ Enable Debug Logging
+logging.basicConfig(level=logging.DEBUG) 
 
 API_BASE_URL = os.getenv("API_BASE_URL")
 
@@ -21,7 +21,7 @@ def get_menu(
     db: Session = Depends(get_db)
 ):
     try:
-        # ✅ Fetch Restaurant Name
+        # Fetch Restaurant Name
         restaurant_sql = text("""
             SELECT restaurant_name FROM restaurant_table WHERE restaurant_id = :restaurant_id
         """)
@@ -31,9 +31,9 @@ def get_menu(
         if not restaurant_row:
             raise HTTPException(status_code=404, detail="Restaurant not found")
 
-        restaurant_name = restaurant_row.restaurant_name  # ✅ Extract restaurant name
+        restaurant_name = restaurant_row.restaurant_name
 
-        # ✅ Fetch All Menu Items
+        # Fetch All Menu Items
         menu_sql = text("""
             SELECT menu_id, food_name, food_description, food_price, category, availability, restaurant_id
             FROM menu_table
@@ -49,9 +49,9 @@ def get_menu(
         menu_items = result.fetchall()
 
         if not menu_items:
-            return []  # If no menu items exist, return an empty array
+            return [] 
 
-        # ✅ Fetch All Photos (Raw SQL)
+        # Fetch All Photos (Raw SQL)
         photo_sql = text("""
             SELECT food_name, file_name 
             FROM restaurant_photos
@@ -59,21 +59,21 @@ def get_menu(
         """)
         photo_result = db.execute(photo_sql, {"restaurant_id": restaurant_id})
         photos = photo_result.fetchall()
-
-        # ✅ Organize Photos by Food Name
+        
+        # Organize Photos by Food Name
         photo_dict = {}
         for photo in photos:
             if photo.food_name:
-                trimmed_food_name = photo.food_name.strip()  # 🔥 Ensure trimming
+                trimmed_food_name = photo.food_name.strip()
                 if trimmed_food_name not in photo_dict:
                     photo_dict[trimmed_food_name] = []
                 photo_dict[trimmed_food_name].append(f"{API_BASE_URL}/api/photos/{photo.file_name}")
 
-        # ✅ Construct Response
+        # Construct Response
         response = []
         for menu in menu_items:
-            trimmed_menu_name = menu.food_name.strip()  # 🔥 Trim before lookup
-            image_urls = photo_dict.get(trimmed_menu_name, [None])  # Default to None if no images
+            trimmed_menu_name = menu.food_name.strip() 
+            image_urls = photo_dict.get(trimmed_menu_name, [None]) 
             for image_url in image_urls:
                 response.append({
                     "menu_id": menu.menu_id,
@@ -83,12 +83,12 @@ def get_menu(
                     "category": menu.category,
                     "availability": menu.availability,
                     "restaurant_id": menu.restaurant_id,
-                    "restaurant_name": restaurant_name,  # ✅ Include restaurant name
-                    "image_url": image_url  # ✅ Ensure image_url is set correctly
+                    "restaurant_name": restaurant_name, 
+                    "image_url": image_url 
                 })
 
         return response
 
     except Exception as e:
-        logging.error(f"❌ Error: {str(e)}")
+        logging.error(f"Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))

@@ -58,12 +58,6 @@ const OrderHistory = () => {
     fetchOrderHistory(setOrders, setLoading);
   }, []);
 
-  // Handle Reorder
-  const handleReorder = (order) => {
-    console.log("Reordering:", order.order_number);
-    Alert.alert("Reorder", "This feature will be implemented soon!");
-  };
-
   // Navigate to Order Details
   const handleViewDetails = (order) => {
     router.push({

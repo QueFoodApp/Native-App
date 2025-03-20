@@ -23,11 +23,11 @@ app.include_router(menu.router, prefix="/api/menu", tags=["Menu"])
 app.include_router(photo.router, prefix="/api", tags=["Photos"])
 app.include_router(cart.router, prefix="/api", tags=["Cart"])
 
-# ✅ Define Pydantic model to receive amount from frontend
+# Define Pydantic model to receive amount from frontend
 class PaymentRequest(BaseModel):
     amount: int  # Amount in cents (e.g., 1000 = $10.00)
 
-# ✅ Updated Payment Intent endpoint
+# Updated Payment Intent endpoint
 @app.post("/api/payment-intent")
 async def create_payment_intent(payment_request: PaymentRequest):
     try:
@@ -35,7 +35,7 @@ async def create_payment_intent(payment_request: PaymentRequest):
         if amount <= 0:
             raise HTTPException(status_code=400, detail="Invalid amount")
 
-        # ✅ Create a PaymentIntent with the correct amount
+        # Create a PaymentIntent with the correct amount
         intent = stripe.PaymentIntent.create(
             amount=amount,  # Amount should now be dynamic
             currency="usd",

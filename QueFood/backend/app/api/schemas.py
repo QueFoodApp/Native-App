@@ -75,7 +75,7 @@ class CartRead(BaseModel):
     taxes: float
     fooditems: List[CartItem] = []
     due_date: Optional[datetime] = None
-    # ✅ Use Pydantic fields instead of SQLAlchemy Column
+    # Use Pydantic fields instead of SQLAlchemy Column
     restaurant_name: Optional[str] = None
     state: Optional[str] = None
     city: Optional[str] = None

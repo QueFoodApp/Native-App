@@ -1,5 +1,5 @@
-const API_BASE_URL = "http://localhost:8000"; 
-// const API_BASE_URL = "http://192.168.68.53:8000"; 
+//const API_BASE_URL = "http://localhost:8000"; 
+const API_BASE_URL = "http://192.168.68.55:8000"; 
 export default API_BASE_URL;
 
 // Try the following in working on localhost 

@@ -6,8 +6,8 @@ import BackButton from '../../components/BackButton';
 import API_BASE_URL from '../../config'; 
 
 const PhoneVerification = () => {
-  const [code, setCode] = useState(["", "", "", "", "", ""]); // For a 6-digit verification code
-  const { phone_number, origin } = useLocalSearchParams(); // Retrieve `phone_number` and `origin` from the query parameters
+  const [code, setCode] = useState(["", "", "", "", "", ""]); 
+  const { phone_number, origin } = useLocalSearchParams();
 
   const handleChange = (text, index) => {
     const newCode = [...code];
@@ -76,9 +76,9 @@ const PhoneVerification = () => {
         //check if this line of code is reached 
         console.log('SignUp is reached');
 
-        router.push({ pathname: '/profile-information', params: { phone_number } }); // Navigate to profile information screen
+        router.push({ pathname: '/profile-information', params: { phone_number } });
       } else if (origin === 'resetPassword') {
-        router.push({ pathname: '/change-password', params: { phone_number } }); // Navigate to change password screen
+        router.push({ pathname: '/change-password', params: { phone_number } });
       }
     } catch (error) {
       Alert.alert('Error', error.message);

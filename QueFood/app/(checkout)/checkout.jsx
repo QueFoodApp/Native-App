@@ -6,7 +6,7 @@ import MapView, { Marker } from "react-native-maps";
 import { Ionicons } from "@expo/vector-icons";
 import { getCartByOrderNumber } from "../HelperFunctions/cartUtil";
 import { getRandomFoodImage } from "../HelperFunctions/imageUtils";
-import API_BASE_URL from "../../config"; // ✅ Ensure correct API endpoint
+import API_BASE_URL from "../../config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import BackButton from "../../components/BackButton";
 
@@ -32,14 +32,14 @@ const Checkout = () => {
   const fetchCartDetails = async () => {
     try {
       if (!orderNumber) {
-        console.error("❌ Order number is undefined. Cannot fetch cart.");
+        console.error("Order number is undefined. Cannot fetch cart.");
         return;
       }
       const cartData = await getCartByOrderNumber(orderNumber.toString());
       setCart(cartData);
       console.log(cartData);
     } catch (error) {
-      console.error("❌ Failed to fetch cart details:", error);
+      console.error("Failed to fetch cart details:", error);
     } finally {
       setLoading(false);
     }
@@ -50,7 +50,7 @@ const Checkout = () => {
       const response = await fetch(`${API_BASE_URL}/api/payment-intent`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: Math.round(parseFloat(total) * 100) }), // Convert to cents
+        body: JSON.stringify({ amount: Math.round(parseFloat(total) * 100) }),
       });
 
       const data = await response.json();
@@ -60,7 +60,7 @@ const Checkout = () => {
 
       return data.client_secret;
     } catch (err) {
-      console.error("❌ Error fetching client secret:", err);
+      console.error("Error fetching client secret:", err);
       Alert.alert("Error", err.message);
       return null;
     }
@@ -79,11 +79,11 @@ const Checkout = () => {
         throw new Error(`Failed to update order status: ${response.status}`);
       }
   
-      console.log(`✅ Order ${orderNumber} status updated to 'prepare'`);
-      return true; // Order updated successfully
+      console.log(`Order ${orderNumber} status updated to 'prepare'`);
+      return true;
     } catch (error) {
-      console.error("❌ Error updating order status:", error);
-      return false; // Order update failed
+      console.error("Error updating order status:", error);
+      return false;
     }
   };
   
@@ -92,7 +92,7 @@ const Checkout = () => {
     try {
       const token = await AsyncStorage.getItem("token");
       if (!token) {
-        console.error("❌ No token found in AsyncStorage.");
+        console.error("No token found in AsyncStorage.");
         return;
       }
   
@@ -102,7 +102,7 @@ const Checkout = () => {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ order_number: orderNumber }), // ✅ Send as JSON body
+        body: JSON.stringify({ order_number: orderNumber }),
       });
   
       const data = await response.json();
@@ -111,9 +111,9 @@ const Checkout = () => {
         throw new Error(data.detail || "Failed to add order to history");
       }
   
-      console.log("✅ Order added to customer history:", data);
+      console.log("Order added to customer history:", data);
     } catch (err) {
-      console.error("❌ Error adding order to history:", JSON.stringify(err, null, 2));
+      console.error("Error adding order to history:", JSON.stringify(err, null, 2));
     }
 };
 
@@ -152,10 +152,10 @@ const Checkout = () => {
       Alert.alert("Payment Failed", paymentSheetError.message);
     } else {
 
-      // ✅ Then, add the order to history
+      // Then, add the order to history
       await addOrderToHistory(cart.order_number);
 
-      // ✅ First, update the order status to "prepare"
+      // First, update the order status to "prepare"
       const orderUpdated = await updateOrderStatus(cart.order_number);
       if (!orderUpdated) {
         Alert.alert("Error", "Failed to update order status.");
@@ -163,8 +163,8 @@ const Checkout = () => {
       }
   
       
-      Alert.alert("✅ Success", "Your payment was successful!");
-      router.push("/home");
+      Alert.alert("Success", "Your payment was successful!");
+      router.push("/order-history");
     }
   };
   
@@ -194,7 +194,7 @@ const Checkout = () => {
           <BackButton />
         </View>
       <ScrollView>
-        {/* ✅ Store Information */}
+        {/* Store Information */}
         <View className="relative">
           <Image source={{ uri: getRandomFoodImage(cart.restaurant_id) }} style={styles.restaurantImage} />
         </View>
@@ -202,7 +202,7 @@ const Checkout = () => {
           <Text className="text-2xl font-bold">{cart.restaurant_name}</Text>
           <Text className="text-gray-500">{cart.street_address || "No address provided"}</Text>
 
-          {/* 🗺️ Map View */}
+          {/* Map View */}
           <View style={styles.mapContainer}>
             <MapView
               style={styles.map}
@@ -224,7 +224,7 @@ const Checkout = () => {
             </MapView>
           </View>
 
-          {/* 🛒 Order Items */}
+          {/* Order Items */}
           <Text className="text-xl font-semibold mt-5">Your Items</Text>
           {cart.fooditems.map((item, index) => (
             <View key={index} className="flex-row justify-between items-center mt-2">
@@ -235,7 +235,7 @@ const Checkout = () => {
             </View>
           ))}
 
-          {/* 🏷️ Pricing Summary */}
+          {/* Pricing Summary */}
           <View className="mt-5 border-t border-gray-300 pt-3">
             <View className="flex-row justify-between">
               <Text className="text-gray-700">Subtotal</Text>
@@ -257,7 +257,7 @@ const Checkout = () => {
         </View>
       </ScrollView>
 
-      {/* 🚀 Confirm & Pay Button */}
+      {/* Confirm & Pay Button */}
       <TouchableOpacity onPress={handleConfirmAndPay} className="m-4 p-4 bg-black rounded-lg" disabled={paying}>
         {paying ? (
           <ActivityIndicator size="small" color="#ffffff" />

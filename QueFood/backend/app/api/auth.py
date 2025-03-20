@@ -34,18 +34,18 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
 
     to_encode.update({"exp": expire})
 
-    print(f"📌 Token Payload Before Encoding: {to_encode}")  # ✅ Debugging
+    print(f"Token Payload Before Encoding: {to_encode}") 
     token = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    print(f"📌 Generated Token: {token}")  # ✅ Debugging
+    print(f"Generated Token: {token}") 
     return token
 
 
 def decode_access_token(token: str) -> dict:
     """Decode a JWT token and return the payload."""
     try:
-        print(f"📌 Received Token for Verification: {token}")  # ✅ Debugging
+        print(f"Received Token for Verification: {token}") 
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        print(f"📌 Decoded Payload: {payload}")  # ✅ Debugging
+        print(f"Decoded Payload: {payload}") 
         return payload
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token has expired.")

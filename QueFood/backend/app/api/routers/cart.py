@@ -104,7 +104,7 @@ def get_cart(order_number: str, db: Session = Depends(get_db)):
     if not cart:
         raise HTTPException(status_code=404, detail="Cart not found or not open")
 
-    print(f"✅ Cart found: {cart}")
+    print(f"Cart found: {cart}")
     
     return cart
 
@@ -133,7 +133,7 @@ def prepare_order(
     db.commit()
     db.refresh(order)
 
-    print(f"✅ Order {order_number} status updated to 'prepare'")
+    print(f"Order {order_number} status updated to 'prepare'")
 
     return order
 

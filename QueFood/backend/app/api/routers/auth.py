@@ -15,7 +15,7 @@ FACEBOOK_CLIENT_ID="1131285361812691"
 FACEBOOK_CLIENT_SECRET= "89394a6bf09d11fc2a74f04fd153aa46"
 FACEBOOK_REDIRECT_URI= "https://quefood-api.com/api/auth/facebook/callback"
 
-# ✅ SEND OTP
+# SEND OTP
 @router.post("/send-otp", response_model=PhoneVerificationResponse)
 def send_otp_endpoint(phone_verification: PhoneVerificationRequest, db: Session = Depends(get_db)):
     existing_user = db.query(CustomerAccount).filter(CustomerAccount.phone_number == phone_verification.phone_number).first()
@@ -29,8 +29,8 @@ def send_otp_endpoint(phone_verification: PhoneVerificationRequest, db: Session 
         phone_number=phone_verification.phone_number,
         otp=otp,
         verified=False,
-        manager_account_name="NA",  # ✅ No default name
-        manager_account_password="NA",  # ✅ No default password
+        manager_account_name="NA",
+        manager_account_password="NA",
     )
     db.add(new_user)
     db.commit()
@@ -51,7 +51,7 @@ def resend_otp(phone_verification: PhoneVerificationRequest, db: Session = Depen
 
     return {"message": "OTP sent successfully"}
 
-# ✅ VERIFY OTP
+# VERIFY OTP
 @router.post("/verify-otp", response_model=PhoneVerificationResponse)
 def verify_otp(request: OTPVerificationRequest, db: Session = Depends(get_db)):
     user = db.query(CustomerAccount).filter(CustomerAccount.phone_number == request.phone_number).first()
@@ -59,11 +59,11 @@ def verify_otp(request: OTPVerificationRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Invalid OTP")
 
     user.verified = True
-    user.otp = None  # ✅ Clear OTP after verification
+    user.otp = None
     db.commit()
     return {"message": "Phone number verified successfully"}
 
-# ✅ SIGNUP
+# SIGNUP
 @router.post("/signup")
 def signup(customer: CustomerAccountCreate, db: Session = Depends(get_db)):
     print("Signup Data:", customer.dict())  # Debugging
@@ -85,7 +85,7 @@ def signup(customer: CustomerAccountCreate, db: Session = Depends(get_db)):
     db.refresh(existing_user)
     return {"message": "Signup successful. You can now log in."}
 
-# ✅ SIGNIN
+# SIGNIN
 @router.post("/signin", response_model=SignInResponse)
 def signin(customer: SignInRequest, db: Session = Depends(get_db)):
     user = db.query(CustomerAccount).filter(CustomerAccount.phone_number == customer.phone_number).first()
@@ -102,7 +102,7 @@ def signin(customer: SignInRequest, db: Session = Depends(get_db)):
     access_token = create_access_token(data={"sub": user.phone_number})
     return {"access_token": access_token, "token_type": "bearer"}
 
-# ✅ GOOGLE SIGN-IN (Fixed)
+# GOOGLE SIGN-IN (Fixed)
 @router.post("/google-signin")
 def google_signin(data: dict, db: Session = Depends(get_db)):
     email = data.get("email")
@@ -112,10 +112,10 @@ def google_signin(data: dict, db: Session = Depends(get_db)):
     print('call google sign in')
 
     if not user:
-        print("❌ User not found for email:", email)
+        print("User not found for email:", email)
         raise HTTPException(status_code=404, detail="User not found. Please sign up with phone number first.")
 
-    # ✅ Generate token for existing users
+    # Generate token for existing users
     token = create_access_token(data={"sub": user.phone_number})
     return {"access_token": token}
 
@@ -181,7 +181,7 @@ def facebook_callback(code: str, db: Session = Depends(get_db)):
     
     return {"access_token": token}
 
-# ✅ REQUEST PASSWORD CHANGE
+# REQUEST PASSWORD CHANGE
 @router.post("/request-password-change", response_model=PhoneVerificationResponse)
 def request_password_change(phone_verification: PhoneVerificationRequest, db: Session = Depends(get_db)):
     user = db.query(CustomerAccount).filter(CustomerAccount.phone_number == phone_verification.phone_number).first()
@@ -196,7 +196,7 @@ def request_password_change(phone_verification: PhoneVerificationRequest, db: Se
 
     return {"message": "OTP sent successfully"}
 
-# ✅ CHANGE PASSWORD
+# CHANGE PASSWORD
 @router.post("/change-password", response_model=PhoneVerificationResponse)
 def change_password(request: ChangePasswordRequest, db: Session = Depends(get_db)):
     user = db.query(CustomerAccount).filter(CustomerAccount.phone_number == request.phone_number).first()

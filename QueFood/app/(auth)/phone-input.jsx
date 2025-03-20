@@ -28,7 +28,7 @@ const PhoneInput = () => {
           return;
         }
 
-        // ✅ Call API to decode the token
+        // Call API to decode the token
         const response = await fetch(`${API_BASE_URL}/api/customer/decode-token`, {
           method: "GET",
           headers: {
@@ -52,7 +52,7 @@ const PhoneInput = () => {
   }, []);
 
   const handleSavePhoneNumber = async () => {
-    const formattedPhoneNumber = phoneNumber.replace(/\D/g, ""); // Remove non-numeric characters
+    const formattedPhoneNumber = phoneNumber.replace(/\D/g, "");
 
     if (formattedPhoneNumber.length !== 10) {
       Alert.alert("Error", "Please enter a valid 10-digit phone number.");
@@ -66,7 +66,7 @@ const PhoneInput = () => {
 
     await AsyncStorage.setItem("userPhoneNumber", formattedPhoneNumber);
     Keyboard.dismiss();
-    router.push("/home"); // ✅ Redirect to home only if the phone number is correct
+    router.push("/home");
   };
 
   return (

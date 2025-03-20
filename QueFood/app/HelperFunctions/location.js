@@ -11,8 +11,7 @@ export const getUserLocation = async (address) => {
       return null;
     }
   } catch (error) {
-    console.error("Error getting location:", error);
-    throw error;
+
   }
 };
 

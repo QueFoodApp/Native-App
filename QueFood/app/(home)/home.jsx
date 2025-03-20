@@ -9,11 +9,11 @@ import { useRouter } from "expo-router";
 import LocationTopBar from "../../components/TopBar"; 
 import { getRandomFoodImage } from "../HelperFunctions/imageUtils";
 
-const { width } = Dimensions.get("window"); // ✅ Get device screen width
+const { width } = Dimensions.get("window");
 
 const Home = () => {
   const [restaurants, setRestaurants] = useState([]);
-  const [bannerRestaurants, setBannerRestaurants] = useState([]); // ✅ Store the random restaurants once
+  const [bannerRestaurants, setBannerRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({ location: "" });
   const [error, setError] = useState(false);
@@ -41,7 +41,7 @@ const Home = () => {
 
       setRestaurants(data);
 
-      // ✅ Pick 4 random restaurants ONCE and store them
+      // Pick 4 random restaurants ONCE and store them
       if (data.length > 0) {
         const shuffled = [...data].sort(() => 0.5 - Math.random());
         setBannerRestaurants(shuffled.slice(0, 4));
@@ -62,7 +62,7 @@ const Home = () => {
           flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
           return nextIndex;
         });
-      }, 5000); // Auto-scroll every 5 seconds
+      }, 5000);
 
       return () => clearInterval(interval);
     }
@@ -82,7 +82,7 @@ const Home = () => {
       <View className="h-48 mb-4">
         <FlatList
           ref={flatListRef}
-          data={bannerRestaurants}  // ✅ Now using a stable state
+          data={bannerRestaurants}
           horizontal
           pagingEnabled
           showsHorizontalScrollIndicator={false}
@@ -92,7 +92,7 @@ const Home = () => {
               onPress={() =>
                 router.push({ pathname: "/menu", params: { id: item.restaurant_id, name: item.restaurant_name } })
               }
-              style={{ width }} // ✅ Ensure each item fills the screen width
+              style={{ width }}
               className="h-48 bg-black justify-center items-center"
             >
               <Image source={{ uri: item.image }} className="absolute w-full h-full opacity-40" />
@@ -139,7 +139,7 @@ const Home = () => {
         </View>
       ) : (
         <FlatList
-          data={restaurants}  // ✅ This now remains stable and doesn't change when scrolling the banner
+          data={restaurants}
           keyExtractor={(item) => item.restaurant_id.toString()}
           renderItem={({ item }) => (
             <TouchableOpacity 

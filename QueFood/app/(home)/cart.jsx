@@ -3,7 +3,7 @@ import { SafeAreaView, View, Text, FlatList, TouchableOpacity, Image } from 'rea
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getAllCarts, getRestaurantName, deleteCart } from '../HelperFunctions/cartUtil';
-import { getRandomFoodImage } from '../HelperFunctions/imageUtils'; // Import your image generator
+import { getRandomFoodImage } from '../HelperFunctions/imageUtils';
 import { useRouter } from 'expo-router';
 
 const Cart = () => {
@@ -70,11 +70,11 @@ const Cart = () => {
 
   const handleCheckout = (orderNumber) => {
     if (!orderNumber) {
-      console.error("❌ No order number found for checkout.");
+      console.error(" No order number found for checkout.");
       return;
     }
 
-    console.log("✅ Navigating to checkout with orderNumber:", orderNumber);
+    console.log("Navigating to checkout with orderNumber:", orderNumber);
     router.push({
       pathname: "/checkout",
       params: { orderNumber },

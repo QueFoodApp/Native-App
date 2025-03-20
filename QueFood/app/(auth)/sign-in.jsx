@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { SafeAreaView, View, Text, Alert } from "react-native";
 import { router } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage"; // ✅ Import AsyncStorage
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import BackgroundShapes from "../../components/Background";
 import PhoneNumberInput from "../../components/PhoneNumberInput";
 import PasswordInput from "../../components/PasswordInput";
